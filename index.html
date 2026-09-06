@@ -350,6 +350,7 @@
           <h2 class="text-lg font-bold text-slate-800">Imbas QR DuitNow</h2>
           <p class="text-xs text-slate-500 mb-5">Rujukan transaksi: <b class="text-brand-700">Infaq Usrah [Nama Anda]</b></p>
 
+          <!-- Paparan QR Awan -->
           <div class="bg-slate-50 border-2 border-dashed border-slate-200 p-4 rounded-2xl mx-auto inline-block max-w-[260px] relative group">
             <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=DuitNow-Kutipan-Usrah-Ridwanullah" alt="QR Bayaran" class="w-56 h-56 object-contain rounded-xl shadow-sm bg-white" />
             <label for="qr-upload" class="cursor-pointer text-[11px] text-brand-700 bg-white border border-slate-300 hover:bg-slate-100 px-3 py-1.5 rounded-full absolute bottom-2 left-1/2 -translate-x-1/2 shadow font-medium whitespace-nowrap">
@@ -478,7 +479,7 @@
     const firebaseConfig = {
       apiKey: "AIzaSyDkHDesrq-l3BfyibVV2TtcyR8fmVPm38s",
       authDomain: "accra-e55cd.firebaseapp.com",
-      databaseURL: "https://accra-e55cd-default-rtdb.asia-southeast1.firebasedatabase.app", // Sesuaikan jika lokasi berbeza
+      databaseURL: "https://accra-e55cd-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "accra-e55cd",
       storageBucket: "accra-e55cd.firebasestorage.app",
       messagingSenderId: "1015060089947",
@@ -516,6 +517,7 @@
     let dates = INITIAL_DATES;
     let bankInfo = INITIAL_BANK;
     let expenses = [];
+    let qrImageCloud = ""; // Gambar QR Awan
     let dbRef = null;
     let isFirebaseReady = false;
 
@@ -535,6 +537,10 @@
             dates = data.dates || INITIAL_DATES;
             bankInfo = data.bankInfo || INITIAL_BANK;
             expenses = data.expenses || [];
+            if (data.qrImage) {
+              qrImageCloud = data.qrImage;
+              document.getElementById('qr-image').src = qrImageCloud;
+            }
           } else {
             saveDataToCloud();
           }
@@ -548,11 +554,12 @@
       } else {
         document.getElementById('firebase-alert').classList.remove('hidden');
         updateSyncStatus(false);
-        // Fallback localStorage jika belum masukkan API key
+        // Fallback localStorage jika offline
         members = JSON.parse(localStorage.getItem('usrah_members_v5')) || INITIAL_MEMBERS;
         dates = JSON.parse(localStorage.getItem('usrah_dates_v5')) || INITIAL_DATES;
         bankInfo = JSON.parse(localStorage.getItem('usrah_bank_v5')) || INITIAL_BANK;
         expenses = JSON.parse(localStorage.getItem('usrah_exp_v5')) || [];
+        qrImageCloud = localStorage.getItem('usrah_qr_img_v5') || "";
         renderAll();
       }
     } catch (e) {
@@ -572,9 +579,9 @@
       }
     }
 
-    // SIMPAN DATA KE AWAN (FIREBASE)
+    // SIMPAN DATA KE AWAN TERMASUK QR
     function saveDataToCloud() {
-      const payload = { members, dates, bankInfo, expenses };
+      const payload = { members, dates, bankInfo, expenses, qrImage: qrImageCloud };
       if (isFirebaseReady && dbRef) {
         dbRef.set(payload);
       } else {
@@ -582,6 +589,7 @@
         localStorage.setItem('usrah_dates_v5', JSON.stringify(dates));
         localStorage.setItem('usrah_bank_v5', JSON.stringify(bankInfo));
         localStorage.setItem('usrah_exp_v5', JSON.stringify(expenses));
+        if (qrImageCloud) localStorage.setItem('usrah_qr_img_v5', qrImageCloud);
         renderAll();
       }
     }
@@ -663,7 +671,6 @@
       const mileageCost = totalKm * RATE_MILEAGE;
       const payer = document.getElementById('trip-payer').value;
 
-      // Amaun tidak wajib: jika kosong, ambil auto-total atau 0
       const rawFinal = document.getElementById('trip-final-amount').value;
       const finalAmount = rawFinal !== "" ? (parseFloat(rawFinal) || 0) : (oilCost + mileageCost + totalToll);
 
@@ -679,10 +686,10 @@
       });
 
       saveDataToCloud();
-      alert(`Tuntutan ${tripName} berjaya direkodkan!`);
+      alert(`Tuntutan ${tripName} berjaya direkodkan ke awan!`);
     }
 
-    // TAMBAH BELANJA BIASA (AMAUN TIDAK WAJIB)
+    // TAMBAH BELANJA BIASA
     function handleAddExpense(e) {
       e.preventDefault();
       const date = document.getElementById('exp-date').value;
@@ -690,7 +697,6 @@
       const desc = document.getElementById('exp-desc').value;
       const payer = document.getElementById('exp-payer').value;
       
-      // Ambil amaun jika ada, jika tiada anggap 0.00
       const rawAmount = document.getElementById('exp-amount').value;
       const amount = rawAmount !== "" ? (parseFloat(rawAmount) || 0) : 0;
 
@@ -702,7 +708,7 @@
       document.getElementById('exp-date').value = new Date().toISOString().slice(0, 10);
     }
 
-    // QUICK-EDIT AMAUN TERUS DARI JADUAL
+    // QUICK-EDIT AMAUN DARI JADUAL
     function quickEditExpenseAmount(id) {
       const item = expenses.find(x => x.id === id);
       if (!item) return;
@@ -814,16 +820,43 @@
       alert("Maklumat akaun bank disimpan ke awan!");
     }
 
+    // MUAT NAIK & SIMPAN QR SECARA KEKAL KE AWAN (FIREBASE)
     function uploadQrCode(event) {
       const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById('qr-image').src = e.target.result;
-          localStorage.setItem('usrah_qr_img_v5', e.target.result);
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          // Kecilkan saiz gambar secara automatik ke max 400px (supaya ringan ~30KB)
+          const canvas = document.createElement('canvas');
+          const maxDim = 400;
+          let w = img.width;
+          let h = img.height;
+          if (w > h && w > maxDim) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else if (h > maxDim) {
+            h = Math.round((h * maxDim) / h);
+            h = maxDim;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          
+          // Tukar kepada format JPEG mampat
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+          
+          qrImageCloud = compressedBase64;
+          document.getElementById('qr-image').src = qrImageCloud;
+          saveDataToCloud();
+          alert("✅ Gambar QR berjaya disimpan ke awan! Semua ahli kini boleh melihat QR ini secara kekal.");
         };
-        reader.readAsDataURL(file);
-      }
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
     function copyAccNumber() {
@@ -948,7 +981,7 @@
         summaryBody.appendChild(sTr);
       });
 
-      // 2. Jadual Perbelanjaan (Amaun Boleh Klik untuk Edit)
+      // 2. Jadual Perbelanjaan
       const totalExpense = expenses.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
       document.getElementById('badge-total-expenses').innerText = `Total: RM ${totalExpense.toFixed(2)}`;
 
@@ -1024,13 +1057,15 @@
       document.getElementById('input-acc-holder').value = bankInfo.accHolder;
       document.getElementById('input-acc-number').value = bankInfo.accNumber;
 
-      const savedQr = localStorage.getItem('usrah_qr_img_v5');
-      if (savedQr) document.getElementById('qr-image').src = savedQr;
+      // Papar gambar QR jika wujud dalam awan
+      if (qrImageCloud) {
+        document.getElementById('qr-image').src = qrImageCloud;
+      }
     }
 
     // BACKUP LOCAL JSON
     function exportData() {
-      const data = { members, dates, expenses, bankInfo };
+      const data = { members, dates, expenses, bankInfo, qrImage: qrImageCloud };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
