@@ -35,7 +35,7 @@
         </div>
       </div>
       <button onclick="exportData()" class="text-xs bg-brand-800 hover:bg-brand-600 px-3 py-1.5 rounded-lg border border-brand-500 flex items-center gap-1.5 transition">
-        <i class="fa-solid fa-download"></i> Simpan Backup
+        <i class="fa-solid fa-download"></i> Backup Data
       </button>
     </div>
 
@@ -48,7 +48,7 @@
         <i class="fa-solid fa-money-bill-wave"></i> Kutipan Infaq Ahli
       </button>
       <button onclick="switchTab('belanja')" id="tab-btn-belanja" class="tab-btn px-4 py-2.5 font-medium border-b-2 border-transparent text-brand-100 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-receipt"></i> Perbelanjaan (Spend)
+        <i class="fa-solid fa-receipt"></i> Perbelanjaan & Kenderaan
       </button>
       <button onclick="switchTab('qr')" id="tab-btn-qr" class="tab-btn px-4 py-2.5 font-medium border-b-2 border-transparent text-brand-100 hover:text-white flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-qrcode"></i> QR & Maklumat Bank
@@ -70,7 +70,7 @@
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Dibelanjakan</span>
           <p id="stat-belanja" class="text-2xl font-extrabold text-rose-600 mt-1">RM 0.00</p>
-          <span class="text-[11px] text-slate-400">Makanan, program & modul</span>
+          <span class="text-[11px] text-slate-400">Trip kenderaan, makan & modul</span>
         </div>
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Baki Bersih Semasa</span>
@@ -84,7 +84,7 @@
         </div>
       </div>
 
-      <!-- Ringkasan Ahli Table -->
+      <!-- Ringkasan Status Ahli -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
           <div>
@@ -94,7 +94,7 @@
             <p class="text-xs text-slate-500">Mengesahkan sama ada ahli ada tunggakan atau menyumbang lebihan infaq.</p>
           </div>
           <span class="text-xs bg-brand-50 text-brand-700 px-3 py-1 rounded-full font-semibold border border-brand-200 self-start">
-            Minima Asas: RM 2.00 / Sesi
+            Kadar Minima: RM 2.00 / Sesi
           </span>
         </div>
 
@@ -147,14 +147,30 @@
       </div>
     </section>
 
-    <!-- 3. PERBELANJAAN TAB -->
+    <!-- 3. PERBELANJAAN & TUNTUTAN KENDERAAN TAB -->
     <section id="tab-belanja" class="tab-content hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Borang Tambah Belanja -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 h-fit">
-          <h3 class="font-bold text-slate-800 text-base mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-cart-shopping text-rose-500"></i> Rekod Belanja Baru
-          </h3>
+
+      <!-- Pilihan Sub-Borang (Biasa vs Kenderaan) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- KIRI: BORANG INPUT (Tabs Kecil: Biasa vs Kenderaan) -->
+        <div class="lg:col-span-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          
+          <div class="flex border-b border-slate-200 pb-2 justify-between items-center">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-file-invoice-dollar text-rose-500"></i> Rekod Wang Keluar
+            </h3>
+            <div class="flex bg-slate-100 p-1 rounded-xl text-xs">
+              <button type="button" onclick="toggleExpenseForm('biasa')" id="btn-sub-biasa" class="px-2.5 py-1 rounded-lg font-bold bg-white text-slate-800 shadow-sm transition">
+                Biasa
+              </button>
+              <button type="button" onclick="toggleExpenseForm('kenderaan')" id="btn-sub-kenderaan" class="px-2.5 py-1 rounded-lg font-medium text-slate-500 hover:text-slate-800 transition">
+                🚗 Kenderaan / Trip
+              </button>
+            </div>
+          </div>
+
+          <!-- SUB-FORM 1: BELANJA BIASA -->
           <form id="form-add-expense" onsubmit="handleAddExpense(event)" class="space-y-3 text-xs">
             <div>
               <label class="block font-medium text-slate-600 mb-1">Tarikh Belanja</label>
@@ -167,7 +183,7 @@
                 <option value="📖 Modul/Kitab">📖 Bahan / Fotostat / Kitab</option>
                 <option value="🎁 Cenderahati">🎁 Cenderahati / Hadiah</option>
                 <option value="🤝 Kebajikan">🤝 Kebajikan / Sumbangan</option>
-                <option value="🏸 Aktiviti/Riadah">🏸 Program Luar / Sewa</option>
+                <option value="🏸 Aktiviti/Riadah">🏸 Aktiviti Luar / Sewa</option>
                 <option value="📦 Lain-lain">📦 Lain-lain Keperluan</option>
               </select>
             </div>
@@ -178,37 +194,117 @@
             <div>
               <label class="block font-medium text-slate-600 mb-1">Jumlah Nilai Belanja (RM)</label>
               <input type="number" step="0.01" min="0.01" id="exp-amount" placeholder="Cth: 17.80" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none font-bold" />
-              <p class="text-[10px] text-slate-400 mt-1">Boleh masukkan amaun tidak sekata mengikut resit (cth: RM 15.60).</p>
             </div>
             <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl shadow transition">
-              Simpan Perbelanjaan
+              Simpan Belanja Biasa
             </button>
           </form>
+
+          <!-- SUB-FORM 2: KALKULATOR TUNTUTAN KENDERAAN -->
+          <div id="form-kenderaan-container" class="hidden space-y-3 text-xs">
+            <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-800 space-y-0.5">
+              <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-gas-pump"></i> Formula Kadar Tuntutan:</p>
+              <p>• Minyak: <b>RM 0.125 / km</b></p>
+              <p>• Mileage (Haus-lusuh): <b>RM 0.05 / km</b></p>
+              <p>• Tol: Mengikut resit / anggaran pergi-balik</p>
+            </div>
+
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Nama Trip / Destinasi</label>
+              <input type="text" id="trip-name" value="Trip to Serdang" placeholder="Cth: Trip to Serdang" class="w-full border border-slate-300 rounded-lg p-2 outline-none font-medium" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block font-medium text-slate-600 mb-1">Tarikh Trip</label>
+                <input type="date" id="trip-date" class="w-full border border-slate-300 rounded-lg p-2 outline-none" />
+              </div>
+              <div>
+                <label class="block font-medium text-slate-600 mb-1">Jenis Perjalanan</label>
+                <select id="trip-type" onchange="calculateTripCost()" class="w-full border border-slate-300 rounded-lg p-2 outline-none">
+                  <option value="2">Pergi & Balik (2-Hala)</option>
+                  <option value="1">Pergi Sahaja (1-Hala)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Jarak Sehala (KM)</label>
+              <input type="number" id="trip-km-one-way" value="65" oninput="calculateTripCost()" step="0.1" class="w-full border border-slate-300 rounded-lg p-2 outline-none font-bold" />
+              <p class="text-[10px] text-slate-400 mt-0.5">Jumlah jarak: <span id="trip-total-km" class="font-bold text-slate-700">130</span> KM</p>
+            </div>
+
+            <!-- Rincian Tol -->
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block font-medium text-slate-600 mb-1">Tol Pergi (RM)</label>
+                <input type="number" id="trip-toll-go" value="3.00" step="0.10" oninput="calculateTripCost()" class="w-full border border-slate-300 rounded-lg p-2 outline-none" />
+              </div>
+              <div>
+                <label class="block font-medium text-slate-600 mb-1">Tol Balik (RM)</label>
+                <input type="number" id="trip-toll-back" value="5.00" step="0.10" oninput="calculateTripCost()" class="w-full border border-slate-300 rounded-lg p-2 outline-none" />
+              </div>
+            </div>
+
+            <!-- Jadual Live Calculation -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1.5 font-mono text-[11px]">
+              <div class="flex justify-between">
+                <span class="text-slate-500">Minyak (<span id="calc-lbl-oil-km">130</span>km × RM0.125):</span>
+                <span class="font-bold text-slate-700">RM <span id="calc-oil">16.25</span></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Mileage (<span id="calc-lbl-mil-km">130</span>km × RM0.05):</span>
+                <span class="font-bold text-slate-700">RM <span id="calc-mileage">6.50</span></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Jumlah Tol (Pergi+Balik):</span>
+                <span class="font-bold text-slate-700">RM <span id="calc-toll">10.00</span></span>
+              </div>
+              <div class="border-t border-slate-200 pt-1 flex justify-between text-xs text-brand-800 font-bold">
+                <span>Jumlah Auto-Kira:</span>
+                <span>RM <span id="calc-auto-total">32.75</span></span>
+              </div>
+            </div>
+
+            <!-- Nilai Tuntutan Akhir (Boleh Laras) -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="font-bold text-slate-700">Tuntutan Akhir Diluluskan (RM)</label>
+                <span class="text-[10px] text-slate-400 font-normal">Boleh laras (cth: genap RM 35)</span>
+              </div>
+              <input type="number" step="0.05" id="trip-final-amount" value="35.00" class="w-full border-2 border-emerald-500 bg-emerald-50/40 rounded-lg p-2.5 text-base font-extrabold text-emerald-800 outline-none" />
+            </div>
+
+            <button type="button" onclick="submitVehicleClaim()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-car"></i> Rekod Masuk ke Perbelanjaan
+            </button>
+          </div>
+
         </div>
 
-        <!-- Senarai Transaksi Keluar -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2">
-          <div class="flex justify-between items-center mb-4">
+        <!-- KANAN: JADUAL ALIRAN PERBELANJAAN KELUAR -->
+        <div class="lg:col-span-7 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                <i class="fa-solid fa-list-ol text-slate-600"></i> Rekod Aliran Perbelanjaan
+                <i class="fa-solid fa-list-check text-slate-600"></i> Sejarah Transaksi Perbelanjaan
               </h3>
-              <p class="text-xs text-slate-500">Semua rekod wang keluar ditolak secara terus dari baki tabung.</p>
+              <p class="text-xs text-slate-500">Semua perbelanjaan termasuk tuntutan kenderaan memotong baki tabung secara automatik.</p>
             </div>
-            <span id="badge-total-expenses" class="text-xs bg-rose-50 text-rose-600 px-3 py-1.5 rounded-full font-bold border border-rose-200">
+            <span id="badge-total-expenses" class="text-xs bg-rose-50 text-rose-600 px-3 py-1.5 rounded-full font-extrabold border border-rose-200 self-start">
               Total: RM 0.00
             </span>
           </div>
 
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
             <table class="w-full text-xs text-left">
-              <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase">
+              <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase font-semibold">
                 <tr>
                   <th class="py-2.5 px-3">Tarikh</th>
                   <th class="py-2.5 px-3">Kategori</th>
-                  <th class="py-2.5 px-3">Butiran</th>
+                  <th class="py-2.5 px-3">Butiran & Kiraan</th>
                   <th class="py-2.5 px-3 text-right">Jumlah (RM)</th>
-                  <th class="py-2.5 px-3 text-center">Tindakan</th>
+                  <th class="py-2.5 px-3 text-center">Padam</th>
                 </tr>
               </thead>
               <tbody id="expense-tbody" class="divide-y divide-slate-100">
@@ -217,6 +313,7 @@
             </table>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -292,14 +389,16 @@
   </main>
 
   <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
-    E-Bendahari Usrah Ridwanullah • Logik Infaq Fleksibel & Perbelanjaan Sistematik
+    E-Bendahari Usrah Ridwanullah • GitHub Pages Ready • Dilengkapi Kiraan Mileage & Minyak
   </footer>
 
   <!-- SCRIPT LOGIK & DATA -->
   <script>
     const MIN_RATE = 2.00;
+    const RATE_OIL = 0.125;   // RM 0.125 / km
+    const RATE_MILEAGE = 0.05; // RM 0.05 / km
 
-    // DATA ASAL: Ditukar daripada boolean kepada nilai sebenar (RM 2 jika TRUE, 0 jika FALSE)
+    // DATA ASAL
     const INITIAL_MEMBERS = [
       { id: 1, name: "Kak Nisa", payments: [2, 2, 0, 0, 0, 0, 0, 0, 0, 0] },
       { id: 2, name: "Sakinah", payments: [2, 2, 2, 2, 2, 0, 0, 0, 0, 0] },
@@ -322,19 +421,31 @@
     };
 
     // Load from LocalStorage
-    let members = JSON.parse(localStorage.getItem('usrah_members_v2')) || INITIAL_MEMBERS;
-    let dates = JSON.parse(localStorage.getItem('usrah_dates_v2')) || INITIAL_DATES;
-    let bankInfo = JSON.parse(localStorage.getItem('usrah_bank_info')) || INITIAL_BANK;
-    let expenses = JSON.parse(localStorage.getItem('usrah_expenses_v2')) || [
-      { id: 101, date: "2026-07-15", category: "🍱 Makanan/Jamuan", desc: "Kuih-muih & Air Usrah", amount: 14.50 },
-      { id: 102, date: "2026-08-10", category: "📖 Modul/Kitab", desc: "Fotostat Modul Tadabbur", amount: 8.40 }
+    let members = JSON.parse(localStorage.getItem('usrah_members_v3')) || INITIAL_MEMBERS;
+    let dates = JSON.parse(localStorage.getItem('usrah_dates_v3')) || INITIAL_DATES;
+    let bankInfo = JSON.parse(localStorage.getItem('usrah_bank_info_v3')) || INITIAL_BANK;
+    let expenses = JSON.parse(localStorage.getItem('usrah_expenses_v3')) || [
+      { 
+        id: 101, 
+        date: "2026-08-15", 
+        category: "🚗 Pengangkutan / Kenderaan", 
+        desc: "Trip to Serdang (130km: Minyak RM16.25, Mileage RM6.50, Tol RM10.00)", 
+        amount: 35.00 
+      },
+      { 
+        id: 102, 
+        date: "2026-07-15", 
+        category: "🍱 Makanan/Jamuan", 
+        desc: "Kuih-muih & Air Usrah", 
+        amount: 14.50 
+      }
     ];
 
     function saveData() {
-      localStorage.setItem('usrah_members_v2', JSON.stringify(members));
-      localStorage.setItem('usrah_dates_v2', JSON.stringify(dates));
-      localStorage.setItem('usrah_expenses_v2', JSON.stringify(expenses));
-      localStorage.setItem('usrah_bank_info', JSON.stringify(bankInfo));
+      localStorage.setItem('usrah_members_v3', JSON.stringify(members));
+      localStorage.setItem('usrah_dates_v3', JSON.stringify(dates));
+      localStorage.setItem('usrah_expenses_v3', JSON.stringify(expenses));
+      localStorage.setItem('usrah_bank_info_v3', JSON.stringify(bankInfo));
       renderAll();
     }
 
@@ -355,7 +466,91 @@
       }
     }
 
-    // TOGGLE / EDIT PAYMENT ON MATRIX CELL
+    // EXPENSE SUB-FORM TOGGLE
+    function toggleExpenseForm(type) {
+      const btnBiasa = document.getElementById('btn-sub-biasa');
+      const btnKenderaan = document.getElementById('btn-sub-kenderaan');
+      const formBiasa = document.getElementById('form-add-expense');
+      const formKenderaan = document.getElementById('form-kenderaan-container');
+
+      if (type === 'biasa') {
+        btnBiasa.className = "px-2.5 py-1 rounded-lg font-bold bg-white text-slate-800 shadow-sm transition";
+        btnKenderaan.className = "px-2.5 py-1 rounded-lg font-medium text-slate-500 hover:text-slate-800 transition";
+        formBiasa.classList.remove('hidden');
+        formKenderaan.classList.add('hidden');
+      } else {
+        btnKenderaan.className = "px-2.5 py-1 rounded-lg font-bold bg-white text-slate-800 shadow-sm transition";
+        btnBiasa.className = "px-2.5 py-1 rounded-lg font-medium text-slate-500 hover:text-slate-800 transition";
+        formKenderaan.classList.remove('hidden');
+        formBiasa.classList.add('hidden');
+        calculateTripCost();
+      }
+    }
+
+    // VEHICLE TRIP CALCULATOR
+    function calculateTripCost() {
+      const oneWayKm = parseFloat(document.getElementById('trip-km-one-way').value) || 0;
+      const multiplier = parseInt(document.getElementById('trip-type').value) || 2;
+      const totalKm = oneWayKm * multiplier;
+      
+      const tollGo = parseFloat(document.getElementById('trip-toll-go').value) || 0;
+      const tollBack = parseFloat(document.getElementById('trip-toll-back').value) || 0;
+      const totalToll = tollGo + tollBack;
+
+      const oilCost = totalKm * RATE_OIL;
+      const mileageCost = totalKm * RATE_MILEAGE;
+      const autoTotal = oilCost + mileageCost + totalToll;
+
+      // Update UI Labels
+      document.getElementById('trip-total-km').innerText = totalKm;
+      document.getElementById('calc-lbl-oil-km').innerText = totalKm;
+      document.getElementById('calc-lbl-mil-km').innerText = totalKm;
+      
+      document.getElementById('calc-oil').innerText = oilCost.toFixed(2);
+      document.getElementById('calc-mileage').innerText = mileageCost.toFixed(2);
+      document.getElementById('calc-toll').innerText = totalToll.toFixed(2);
+      document.getElementById('calc-auto-total').innerText = autoTotal.toFixed(2);
+    }
+
+    // SUBMIT VEHICLE CLAIM
+    function submitVehicleClaim() {
+      const tripName = document.getElementById('trip-name').value.trim() || "Trip Kenderaan Usrah";
+      let date = document.getElementById('trip-date').value;
+      if (!date) {
+        date = new Date().toISOString().slice(0, 10);
+      }
+      
+      const oneWayKm = parseFloat(document.getElementById('trip-km-one-way').value) || 0;
+      const multiplier = parseInt(document.getElementById('trip-type').value) || 2;
+      const totalKm = oneWayKm * multiplier;
+      
+      const tollGo = parseFloat(document.getElementById('trip-toll-go').value) || 0;
+      const tollBack = parseFloat(document.getElementById('trip-toll-back').value) || 0;
+      const totalToll = tollGo + tollBack;
+      const oilCost = totalKm * RATE_OIL;
+      const mileageCost = totalKm * RATE_MILEAGE;
+
+      const finalAmount = parseFloat(document.getElementById('trip-final-amount').value);
+      if (isNaN(finalAmount) || finalAmount <= 0) {
+        alert("Sila masukkan nilai tuntutan akhir yang sah.");
+        return;
+      }
+
+      const desc = `${tripName} (${totalKm}km: Minyak RM${oilCost.toFixed(2)}, Mileage RM${mileageCost.toFixed(2)}, Tol RM${totalToll.toFixed(2)})`;
+
+      expenses.unshift({
+        id: Date.now(),
+        date: date,
+        category: "🚗 Pengangkutan / Kenderaan",
+        desc: desc,
+        amount: finalAmount
+      });
+
+      saveData();
+      alert(`Tuntutan ${tripName} berjaya direkodkan sebanyak RM ${finalAmount.toFixed(2)}!`);
+    }
+
+    // TOGGLE / EDIT MATRIX CELL
     function editCellPayment(mIdx, dIdx) {
       const currentVal = members[mIdx].payments[dIdx] || 0;
       const memberName = members[mIdx].name;
@@ -380,7 +575,7 @@
       }
     }
 
-    // ADD SESSION
+    // ADD NEW SESSION
     function addNewSessionPrompt() {
       const newDate = prompt("Masukkan tarikh sesi usrah baru (cth: 13/9/26):");
       if (newDate && newDate.trim() !== "") {
@@ -390,7 +585,7 @@
       }
     }
 
-    // EXPENSES
+    // HANDLE EXPENSE BIASA
     function handleAddExpense(e) {
       e.preventDefault();
       const date = document.getElementById('exp-date').value;
@@ -400,7 +595,7 @@
 
       if (!date || !desc || isNaN(amount) || amount <= 0) return;
 
-      expenses.push({ id: Date.now(), date, category, desc, amount });
+      expenses.unshift({ id: Date.now(), date, category, desc, amount });
       saveData();
       e.target.reset();
     }
@@ -412,14 +607,14 @@
       }
     }
 
-    // BANK DETAILS SAVE
+    // BANK DETAILS
     function saveBankDetails(e) {
       e.preventDefault();
       bankInfo.bankName = document.getElementById('input-bank-name').value.trim();
       bankInfo.accHolder = document.getElementById('input-acc-holder').value.trim();
       bankInfo.accNumber = document.getElementById('input-acc-number').value.trim();
       saveData();
-      alert("Maklumat akaun bank berjaya dikemaskini!");
+      alert("Maklumat akaun bank berjaya disimpan!");
     }
 
     // QR UPLOAD
@@ -429,7 +624,7 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           document.getElementById('qr-image').src = e.target.result;
-          localStorage.setItem('usrah_qr_img', e.target.result);
+          localStorage.setItem('usrah_qr_img_v3', e.target.result);
         };
         reader.readAsDataURL(file);
       }
@@ -453,7 +648,7 @@
       window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // RENDER SEMUA PAPARAN
+    // RENDER SEMUA
     function renderAll() {
       let totalActualInflow = 0;
       let totalDueAll = 0;
@@ -544,19 +739,20 @@
         summaryBody.appendChild(sTr);
       });
 
-      // 2. Render Expenses Table
+      // 2. Expenses Table
       const totalExpense = expenses.reduce((acc, curr) => acc + curr.amount, 0);
       document.getElementById('badge-total-expenses').innerText = `Total: RM ${totalExpense.toFixed(2)}`;
 
       const expBody = document.getElementById('expense-tbody');
       expBody.innerHTML = '';
       expenses.forEach(x => {
+        const isTransport = x.category.includes("Kenderaan") || x.category.includes("Pengangkutan");
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="py-2.5 px-3 text-slate-500">${x.date}</td>
-          <td class="py-2.5 px-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${x.category}</span></td>
+          <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">${x.date}</td>
+          <td class="py-2.5 px-3"><span class="${isTransport ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-700'} px-2 py-0.5 rounded font-medium text-[11px] whitespace-nowrap">${x.category}</span></td>
           <td class="py-2.5 px-3 font-medium text-slate-700">${x.desc}</td>
-          <td class="py-2.5 px-3 text-right font-bold text-rose-600">RM ${x.amount.toFixed(2)}</td>
+          <td class="py-2.5 px-3 text-right font-extrabold text-rose-600 whitespace-nowrap">RM ${x.amount.toFixed(2)}</td>
           <td class="py-2.5 px-3 text-center">
             <button onclick="deleteExpense(${x.id})" class="text-slate-400 hover:text-rose-600 transition">
               <i class="fa-solid fa-trash-can"></i>
@@ -566,14 +762,14 @@
         expBody.appendChild(tr);
       });
 
-      // 3. Stat Card Top Totals
+      // 3. Stat Cards
       const bakiBersih = totalActualInflow - totalExpense;
       document.getElementById('stat-kutipan').innerText = `RM ${totalActualInflow.toFixed(2)}`;
       document.getElementById('stat-belanja').innerText = `RM ${totalExpense.toFixed(2)}`;
       document.getElementById('stat-baki').innerText = `RM ${bakiBersih.toFixed(2)}`;
       document.getElementById('stat-tunggakan').innerText = `RM ${totalDueAll.toFixed(2)}`;
 
-      // 4. Update Bank Display & Inputs
+      // 4. Update Bank Info
       document.getElementById('disp-bank-name').innerText = bankInfo.bankName;
       document.getElementById('disp-acc-holder').innerText = bankInfo.accHolder;
       document.getElementById('disp-acc-number').innerText = bankInfo.accNumber;
@@ -582,12 +778,12 @@
       document.getElementById('input-acc-holder').value = bankInfo.accHolder;
       document.getElementById('input-acc-number').value = bankInfo.accNumber;
 
-      // Restore QR
-      const savedQr = localStorage.getItem('usrah_qr_img');
+      // QR Image
+      const savedQr = localStorage.getItem('usrah_qr_img_v3');
       if (savedQr) document.getElementById('qr-image').src = savedQr;
     }
 
-    // EXPORT DATA BACKUP
+    // BACKUP
     function exportData() {
       const data = { members, dates, expenses, bankInfo };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -598,7 +794,15 @@
       a.click();
     }
 
-    window.onload = renderAll;
+    // Default Date Set
+    window.onload = function() {
+      const today = new Date().toISOString().slice(0, 10);
+      const expDate = document.getElementById('exp-date');
+      const tripDate = document.getElementById('trip-date');
+      if (expDate) expDate.value = today;
+      if (tripDate) tripDate.value = today;
+      renderAll();
+    };
   </script>
 </body>
 </html>
