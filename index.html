@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Bendahari Usrah Ridwanullah</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <!-- TOP NAVBAR -->
+  <header class="bg-brand-700 text-white shadow-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <div class="bg-white text-brand-700 p-2 rounded-xl shadow font-bold text-lg">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold leading-tight">Bendahari Usrah</h1>
+          <p class="text-xs text-brand-100 font-medium tracking-wide">USRAH RIDWANULLAH (RM 2 / Minggu)</p>
+        </div>
+      </div>
+      <button onclick="exportData()" class="text-xs bg-brand-800 hover:bg-brand-600 px-3 py-1.5 rounded-lg border border-brand-500 flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-download"></i> Backup Data
+      </button>
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="max-w-6xl mx-auto px-4 flex space-x-2 overflow-x-auto text-sm border-t border-brand-600/60 scrollbar-none">
+      <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn px-4 py-2.5 font-medium border-b-2 border-white text-white flex items-center gap-2">
+        <i class="fa-solid fa-chart-pie"></i> Ringkasan
+      </button>
+      <button onclick="switchTab('kutipan')" id="tab-btn-kutipan" class="tab-btn px-4 py-2.5 font-medium border-b-2 border-transparent text-brand-100 hover:text-white flex items-center gap-2">
+        <i class="fa-solid fa-clipboard-check"></i> Kutipan Ahli
+      </button>
+      <button onclick="switchTab('belanja')" id="tab-btn-belanja" class="tab-btn px-4 py-2.5 font-medium border-b-2 border-transparent text-brand-100 hover:text-white flex items-center gap-2">
+        <i class="fa-solid fa-receipt"></i> Perbelanjaan
+      </button>
+      <button onclick="switchTab('qr')" id="tab-btn-qr" class="tab-btn px-4 py-2.5 font-medium border-b-2 border-transparent text-brand-100 hover:text-white flex items-center gap-2">
+        <i class="fa-solid fa-qrcode"></i> Kod QR & Bank
+      </button>
+    </nav>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto p-4 flex-1 w-full">
+
+    <!-- 1. DASHBOARD TAB -->
+    <section id="tab-dashboard" class="tab-content space-y-6">
+      <!-- Stat Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Jumlah Terkumpul</span>
+          <p id="stat-kutipan" class="text-2xl font-bold text-emerald-600 mt-1">RM 0</p>
+          <span class="text-[11px] text-slate-400">Daripada semua sesi</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Jumlah Dibelanjakan</span>
+          <p id="stat-belanja" class="text-2xl font-bold text-rose-600 mt-1">RM 0</p>
+          <span class="text-[11px] text-slate-400">Bahan, makan & program</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Baki Bersih Tabung</span>
+          <p id="stat-baki" class="text-2xl font-bold text-blue-600 mt-1">RM 0</p>
+          <span class="text-[11px] text-slate-400">Dalam akaun semasa</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tunggakan Ahli</span>
+          <p id="stat-tunggakan" class="text-2xl font-bold text-amber-600 mt-1">RM 0</p>
+          <span class="text-[11px] text-slate-400">Belum dilunaskan</span>
+        </div>
+      </div>
+
+      <!-- Ringkasan Status Ahli & Fast WhatsApp Reminder -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-bold text-slate-800 text-base md:text-lg flex items-center gap-2">
+            <i class="fa-solid fa-users text-brand-600"></i> Status Terkini Ahli Usrah
+          </h2>
+          <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">Kadar: RM 2 / Sesi</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-slate-600 text-xs uppercase border-y border-slate-200">
+              <tr>
+                <th class="py-3 px-3">Nama Ahli</th>
+                <th class="py-3 px-3 text-center">Sesi Selesai</th>
+                <th class="py-3 px-3 text-right">Telah Bayar</th>
+                <th class="py-3 px-3 text-right">Tunggakan</th>
+                <th class="py-3 px-3 text-center">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="member-summary-tbody" class="divide-y divide-slate-100">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. KUTIPAN MINGGUAN TAB -->
+    <section id="tab-kutipan" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days text-brand-600"></i> Rekod Kutipan Mingguan
+            </h2>
+            <p class="text-xs text-slate-500">Klik pada kotak semak (checkbox) untuk tukar status pembayaran.</p>
+          </div>
+          <button onclick="addNewSessionPrompt()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-2 self-start md:self-auto transition">
+            <i class="fa-solid fa-plus"></i> Tambah Tarikh Sesi
+          </button>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200" id="matrix-head">
+              <!-- Rendered via JS -->
+            </thead>
+            <tbody class="divide-y divide-slate-100" id="matrix-body">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. PERBELANJAAN (SPEND) TAB -->
+    <section id="tab-belanja" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Borang Tambah Belanja -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1">
+          <h3 class="font-bold text-slate-800 text-base mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-cart-plus text-rose-500"></i> Rekod Belanja Baru
+          </h3>
+          <form id="form-add-expense" onsubmit="handleAddExpense(event)" class="space-y-3 text-xs">
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Tarikh</label>
+              <input type="date" id="exp-date" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Kategori Perbelanjaan</label>
+              <select id="exp-category" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="Makanan/Jamuan">🍱 Makanan & Jamuan Usrah</option>
+                <option value="Modul/Bahan">📖 Modul & Bahan Pengisian</option>
+                <option value="Hadiah/Cenderahati">🎁 Hadiah & Cenderahati</option>
+                <option value="Kebajikan">🤝 Kebajikan Ahli</option>
+                <option value="Aktiviti/Riadah">🏸 Aktiviti Luar / Riadah</option>
+                <option value="Lain-lain">📦 Lain-lain</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Perincian / Butiran</label>
+              <input type="text" id="exp-desc" placeholder="Contoh: Air mineral & kuih muih" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Jumlah (RM)</label>
+              <input type="number" step="0.50" min="0" id="exp-amount" placeholder="0.00" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-2.5 rounded-lg shadow transition">
+              Simpan Perbelanjaan
+            </button>
+          </form>
+        </div>
+
+        <!-- Senarai Rekod Belanja -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-slate-600"></i> Sejarah Transaksi Keluar
+            </h3>
+            <span id="badge-total-expenses" class="text-xs bg-rose-50 text-rose-600 px-3 py-1 rounded-full font-bold border border-rose-200">
+              RM 0.00
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase">
+                <tr>
+                  <th class="py-2.5 px-3">Tarikh</th>
+                  <th class="py-2.5 px-3">Kategori</th>
+                  <th class="py-2.5 px-3">Butiran</th>
+                  <th class="py-2.5 px-3 text-right">Jumlah (RM)</th>
+                  <th class="py-2.5 px-3 text-center">Padam</th>
+                </tr>
+              </thead>
+              <tbody id="expense-tbody" class="divide-y divide-slate-100">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. QR CODE & MAKLUMAT PEMBAYARAN TAB -->
+    <section id="tab-qr" class="tab-content hidden space-y-6">
+      <div class="max-w-md mx-auto bg-white rounded-3xl shadow-md border border-slate-200 overflow-hidden text-center p-6">
+        <span class="inline-block bg-brand-100 text-brand-800 text-xs px-3 py-1 rounded-full font-semibold mb-2">
+          DuitNow / QR Pay Usrah
+        </span>
+        <h2 class="text-lg font-bold text-slate-800">Imbas Untuk Bayar</h2>
+        <p class="text-xs text-slate-500 mb-5">Sila letakkan rujukan: <b>Kutipan Usrah [Nama Anda]</b></p>
+
+        <!-- QR Display Container -->
+        <div class="bg-slate-50 border-2 border-dashed border-slate-200 p-4 rounded-2xl mx-auto inline-block max-w-[260px] relative group">
+          <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=DuitNow-Kutipan-Usrah-Ridwanullah" alt="QR Bayaran" class="w-56 h-56 object-contain rounded-xl shadow-sm" />
+          <label for="qr-upload" class="cursor-pointer text-[11px] text-brand-700 bg-white border border-slate-300 hover:bg-slate-100 px-3 py-1 rounded-full absolute bottom-2 left-1/2 -translate-x-1/2 shadow font-medium">
+            <i class="fa-solid fa-camera"></i> Tukar Gambar QR
+          </label>
+          <input type="file" id="qr-upload" accept="image/*" class="hidden" onchange="uploadQrCode(event)" />
+        </div>
+
+        <!-- Bank Details -->
+        <div class="mt-6 bg-slate-50 rounded-2xl p-4 text-left border border-slate-200 space-y-2 text-xs">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500">Bank:</span>
+            <span class="font-semibold text-slate-700" id="bank-name">Maybank / CIMB</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500">Nama Penerima:</span>
+            <span class="font-semibold text-slate-700" id="acc-holder">Bendahari Usrah</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500">No. Akaun:</span>
+            <span class="font-mono font-bold text-slate-800 text-sm" id="acc-number">162000000000</span>
+          </div>
+        </div>
+
+        <button onclick="copyAccNumber()" class="mt-4 w-full bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
+          <i class="fa-regular fa-copy"></i> Salin No. Akaun
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
+    Sistem Pengurusan Tabung Usrah Ridwanullah • GitHub Pages Ready
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // 1. DATA AWAL DARI JADUAL ASAL
+    const INITIAL_MEMBERS = [
+      { id: 1, name: "Kak Nisa", payments: [true, true, false, false, false, false, false, false, false, false] },
+      { id: 2, name: "Sakinah", payments: [true, true, true, true, true, false, false, false, false, false] },
+      { id: 3, name: "Farah Sya", payments: [true, true, false, false, false, false, false, false, false, false] },
+      { id: 4, name: "Niki", payments: [false, false, false, false, false, false, false, false, false, false] },
+      { id: 5, name: "Firzanah", payments: [true, true, true, true, true, true, true, true, true, false] },
+      { id: 6, name: "Nabila", payments: [true, true, true, true, true, true, true, true, true, true] },
+      { id: 7, name: "Athirah", payments: [true, true, true, true, true, true, true, false, false, false] }
+    ];
+
+    const INITIAL_DATES = [
+      "26/6/26", "5/7/26", "13/7/26", "24/7/26", "31/7/26", 
+      "2/8/26", "15/8/26", "23/8/26", "27/8/26", "6/9/26"
+    ];
+
+    const RATE_PER_WEEK = 2.00;
+
+    // Load from LocalStorage or fallback
+    let members = JSON.parse(localStorage.getItem('usrah_members')) || INITIAL_MEMBERS;
+    let dates = JSON.parse(localStorage.getItem('usrah_dates')) || INITIAL_DATES;
+    let expenses = JSON.parse(localStorage.getItem('usrah_expenses')) || [
+      { id: 101, date: "2026-07-15", category: "Makanan/Jamuan", desc: "Jamuan Ringkas Usrah", amount: 12.00 },
+      { id: 102, date: "2026-08-10", category: "Modul/Bahan", desc: "Fotostat Kitab & Nota", amount: 10.00 }
+    ];
+
+    // SAVE STATE
+    function saveData() {
+      localStorage.setItem('usrah_members', JSON.stringify(members));
+      localStorage.setItem('usrah_dates', JSON.stringify(dates));
+      localStorage.setItem('usrah_expenses', JSON.stringify(expenses));
+      renderAll();
+    }
+
+    // TAB SWITCHING
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-white', 'text-white');
+        btn.classList.add('border-transparent', 'text-brand-100');
+      });
+
+      const selectedContent = document.getElementById(`tab-${tabId}`);
+      const selectedBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (selectedContent) selectedContent.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.add('border-white', 'text-white');
+        selectedBtn.classList.remove('border-transparent', 'text-brand-100');
+      }
+    }
+
+    // TOGGLE PAYMENT MATRIX
+    function togglePayment(memberIndex, dateIndex) {
+      members[memberIndex].payments[dateIndex] = !members[memberIndex].payments[dateIndex];
+      saveData();
+    }
+
+    // ADD NEW SESSION PROMPT
+    function addNewSessionPrompt() {
+      const newDate = prompt("Masukkan tarikh sesi usrah baru (cth: 13/9/26):");
+      if (newDate) {
+        dates.push(newDate.trim());
+        members.forEach(m => m.payments.push(false));
+        saveData();
+      }
+    }
+
+    // EXPENSES LOGIC
+    function handleAddExpense(e) {
+      e.preventDefault();
+      const date = document.getElementById('exp-date').value;
+      const category = document.getElementById('exp-category').value;
+      const desc = document.getElementById('exp-desc').value;
+      const amount = parseFloat(document.getElementById('exp-amount').value) || 0;
+
+      if (!date || !desc || amount <= 0) return;
+
+      expenses.push({ id: Date.now(), date, category, desc, amount });
+      saveData();
+      e.target.reset();
+    }
+
+    function deleteExpense(id) {
+      if (confirm("Adakah anda pasti mahu memadam perbelanjaan ini?")) {
+        expenses = expenses.filter(x => x.id !== id);
+        saveData();
+      }
+    }
+
+    // QR UPLOAD LOGIC
+    function uploadQrCode(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('qr-image').src = e.target.result;
+          localStorage.setItem('usrah_qr_img', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // COPY ACC
+    function copyAccNumber() {
+      const acc = document.getElementById('acc-number').innerText;
+      navigator.clipboard.writeText(acc);
+      alert("No. akaun berjaya disalin: " + acc);
+    }
+
+    // WHATSAPP REMINDER GENERATOR
+    function sendWhatsAppReminder(memberName, tunggakan) {
+      const text = encodeURIComponent(
+        `Salam ${memberName}, peringatan mesra daripada Bendahari Usrah Ridwanullah.\n\n` +
+        `Setakat ini terdapat tunggakan tabung usrah sebanyak *RM ${tunggakan.toFixed(2)}* (Min RM 2/minggu).\n\n` +
+        `Boleh rujuk dan buat bayaran menerusi QR Tabung Usrah ya. Jazakallahu khair! ✨`
+      );
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    }
+
+    // RENDER FUNCTIONS
+    function renderAll() {
+      let totalCollected = 0;
+      const totalExpectedPerMember = dates.length * RATE_PER_WEEK;
+      let totalDue = 0;
+
+      // 1. Render Matrix Table
+      const headTr = document.createElement('tr');
+      headTr.innerHTML = `<th class="py-3 px-3 min-w-[120px] sticky left-0 bg-slate-100 z-10">Nama Ahli</th>` +
+        dates.map(d => `<th class="py-3 px-2 text-center whitespace-nowrap">${d}</th>`).join('') +
+        `<th class="py-3 px-3 text-right">Jumlah</th>`;
+      document.getElementById('matrix-head').innerHTML = '';
+      document.getElementById('matrix-head').appendChild(headTr);
+
+      const matrixBody = document.getElementById('matrix-body');
+      matrixBody.innerHTML = '';
+
+      const summaryBody = document.getElementById('member-summary-tbody');
+      summaryBody.innerHTML = '';
+
+      members.forEach((m, mIdx) => {
+        const paidCount = m.payments.filter(Boolean).length;
+        const paidAmount = paidCount * RATE_PER_WEEK;
+        const dueAmount = totalExpectedPerMember - paidAmount;
+        totalCollected += paidAmount;
+        totalDue += dueAmount;
+
+        // Row Matrix
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50/80 transition";
+        let dateCells = m.payments.map((isPaid, dIdx) => `
+          <td class="py-2.5 px-2 text-center">
+            <input type="checkbox" ${isPaid ? 'checked' : ''} 
+              onchange="togglePayment(${mIdx}, ${dIdx})"
+              class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500 cursor-pointer accent-brand-600" />
+          </td>
+        `).join('');
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-semibold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-100">${m.name}</td>
+          ${dateCells}
+          <td class="py-2.5 px-3 text-right font-bold text-emerald-600">RM ${paidAmount.toFixed(2)}</td>
+        `;
+        matrixBody.appendChild(tr);
+
+        // Row Summary
+        const sTr = document.createElement('tr');
+        sTr.innerHTML = `
+          <td class="py-3 px-3 font-semibold text-slate-800">${m.name}</td>
+          <td class="py-3 px-3 text-center">
+            <span class="inline-block bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-medium">
+              ${paidCount} / ${dates.length} sesi
+            </span>
+          </td>
+          <td class="py-3 px-3 text-right font-semibold text-emerald-600">RM ${paidAmount.toFixed(2)}</td>
+          <td class="py-3 px-3 text-right font-bold ${dueAmount > 0 ? 'text-amber-600' : 'text-slate-400'}">
+            RM ${dueAmount.toFixed(2)}
+          </td>
+          <td class="py-3 px-3 text-center">
+            ${dueAmount > 0 ? `
+              <button onclick="sendWhatsAppReminder('${m.name}', ${dueAmount})" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg transition inline-flex items-center gap-1 shadow-sm">
+                <i class="fa-brands fa-whatsapp"></i> Ingatkan
+              </button>
+            ` : `
+              <span class="text-xs text-emerald-600 font-medium"><i class="fa-solid fa-check"></i> Beres</span>
+            `}
+          </td>
+        `;
+        summaryBody.appendChild(sTr);
+      });
+
+      // 2. Render Expenses
+      const totalExpense = expenses.reduce((acc, curr) => acc + curr.amount, 0);
+      document.getElementById('badge-total-expenses').innerText = `RM ${totalExpense.toFixed(2)}`;
+
+      const expBody = document.getElementById('expense-tbody');
+      expBody.innerHTML = '';
+      expenses.forEach(x => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 text-slate-500">${x.date}</td>
+          <td class="py-2.5 px-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${x.category}</span></td>
+          <td class="py-2.5 px-3 font-medium text-slate-700">${x.desc}</td>
+          <td class="py-2.5 px-3 text-right font-bold text-rose-600">RM ${x.amount.toFixed(2)}</td>
+          <td class="py-2.5 px-3 text-center">
+            <button onclick="deleteExpense(${x.id})" class="text-slate-400 hover:text-rose-600 transition">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </td>
+        `;
+        expBody.appendChild(tr);
+      });
+
+      // 3. Update Dashboard Stats
+      const baki = totalCollected - totalExpense;
+      document.getElementById('stat-kutipan').innerText = `RM ${totalCollected.toFixed(2)}`;
+      document.getElementById('stat-belanja').innerText = `RM ${totalExpense.toFixed(2)}`;
+      document.getElementById('stat-baki').innerText = `RM ${baki.toFixed(2)}`;
+      document.getElementById('stat-tunggakan').innerText = `RM ${totalDue.toFixed(2)}`;
+
+      // Restore saved custom QR image if present
+      const savedQr = localStorage.getItem('usrah_qr_img');
+      if (savedQr) {
+        document.getElementById('qr-image').src = savedQr;
+      }
+    }
+
+    // EXPORT BACKUP
+    function exportData() {
+      const data = { members, dates, expenses };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `backup_usrah_ridwanullah_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+    }
+
+    // Run on load
+    window.onload = renderAll;
+  </script>
+</body>
+</html>
