@@ -8,6 +8,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Firebase SDKs (Compat Version) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -30,7 +33,13 @@
           <i class="fa-solid fa-hand-holding-dollar"></i>
         </div>
         <div>
-          <h1 class="text-base md:text-lg font-bold leading-tight">E-Bendahari Usrah</h1>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base md:text-lg font-bold leading-tight">E-Bendahari Usrah</h1>
+            <!-- Status Penyelarasan Awan (Live Sync) -->
+            <span id="sync-status" class="text-[10px] bg-emerald-500/30 text-white border border-emerald-300/40 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-cloud"></i> Menyambung...
+            </span>
+          </div>
           <p class="text-xs text-brand-100 font-medium">USRAH RIDWANULLAH (Min. Infaq RM 2 / Sesi)</p>
         </div>
       </div>
@@ -55,6 +64,11 @@
       </button>
     </nav>
   </header>
+
+  <!-- BANNER JIKA BELUM SET LENGKAP FIREBASE -->
+  <div id="firebase-alert" class="hidden bg-amber-500 text-white px-4 py-2 text-xs text-center font-medium">
+    ⚠️ <b>Peringatan:</b> Sila pastikan anda telah memasukkan <code>apiKey</code> dan <code>databaseURL</code> Firebase anda di dalam kod untuk penyegerakan secara langsung.
+  </div>
 
   <!-- MAIN CONTAINER -->
   <main class="max-w-6xl mx-auto p-4 flex-1 w-full space-y-6">
@@ -109,9 +123,7 @@
                 <th class="py-3 px-3 text-center">WhatsApp</th>
               </tr>
             </thead>
-            <tbody id="member-summary-tbody" class="divide-y divide-slate-100">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="member-summary-tbody" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
@@ -126,7 +138,7 @@
               <i class="fa-solid fa-table-cells text-brand-600"></i> Matriks Kutipan Mengikut Sesi
             </h2>
             <p class="text-xs text-slate-500">
-              Klik pada kotak amaun untuk tandakan RM 2, atau klik untuk tukar jumlah (cth: RM 5, RM 10).
+              Klik pada kotak amaun untuk tandakan RM 2, atau klik untuk masukkan jumlah lain (cth: RM 5, RM 10).
             </p>
           </div>
           <button onclick="addNewSessionPrompt()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-3 py-2 rounded-xl flex items-center gap-1.5 transition self-start md:self-auto shadow-sm">
@@ -136,12 +148,8 @@
 
         <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-inner">
           <table class="w-full text-xs text-left">
-            <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200" id="matrix-head">
-              <!-- Rendered via JS -->
-            </thead>
-            <tbody class="divide-y divide-slate-100" id="matrix-body">
-              <!-- Rendered via JS -->
-            </tbody>
+            <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200" id="matrix-head"></thead>
+            <tbody class="divide-y divide-slate-100" id="matrix-body"></tbody>
           </table>
         </div>
       </div>
@@ -152,7 +160,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- KIRI: BORANG INPUT BELANJA / KENDERAAN -->
+        <!-- KIRI: BORANG INPUT (Biasa vs Kenderaan) -->
         <div class="lg:col-span-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
           
           <div class="flex border-b border-slate-200 pb-2 justify-between items-center">
@@ -188,18 +196,21 @@
             </div>
             <div>
               <label class="block font-medium text-slate-600 mb-1">Butiran / Catatan</label>
-              <input type="text" id="exp-desc" placeholder="Cth: Air mineral & kuih muih sesi 4" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              <input type="text" id="exp-desc" placeholder="Cth: Air mineral, kuih usrah, cenderahati" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
             </div>
             <div>
               <label class="block font-medium text-slate-600 mb-1">Dibayar / Didahulukan Oleh</label>
               <select id="exp-payer" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none bg-white">
                 <option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>
-                <!-- Opsyen nama ahli akan dimasukkan secara automatik -->
               </select>
             </div>
             <div>
-              <label class="block font-medium text-slate-600 mb-1">Jumlah Nilai Belanja (RM)</label>
-              <input type="number" step="0.01" min="0.01" id="exp-amount" placeholder="Cth: 17.80" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none font-bold" />
+              <div class="flex justify-between items-center mb-1">
+                <label class="block font-medium text-slate-600">Jumlah Nilai Belanja (RM)</label>
+                <span class="text-[10px] text-emerald-600 font-semibold italic">Pilihan (Tidak wajib)</span>
+              </div>
+              <input type="number" step="0.01" id="exp-amount" placeholder="0.00 (Boleh biar kosong jika belum pasti)" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none font-bold" />
+              <p class="text-[10px] text-slate-400 mt-0.5">Jika kosong, ia disimpan sebagai RM 0.00 dan boleh diisi kemudian.</p>
             </div>
             <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl shadow transition">
               Simpan Belanja Biasa
@@ -212,7 +223,7 @@
               <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-gas-pump"></i> Formula Kadar Tuntutan:</p>
               <p>• Minyak: <b>RM 0.125 / km</b></p>
               <p>• Mileage (Haus-lusuh): <b>RM 0.05 / km</b></p>
-              <p>• Tol: Mengikut resit / anggaran pergi-balik</p>
+              <p>• Tol: Mengikut anggaran / resit pergi-balik</p>
             </div>
 
             <div>
@@ -253,12 +264,9 @@
 
             <div>
               <label class="block font-medium text-slate-600 mb-1">Pemandu / Didahulukan Oleh</label>
-              <select id="trip-payer" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none bg-white">
-                <!-- Opsyen nama ahli dimasukkan automatik -->
-              </select>
+              <select id="trip-payer" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none bg-white"></select>
             </div>
 
-            <!-- Jadual Live Calculation -->
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1.5 font-mono text-[11px]">
               <div class="flex justify-between">
                 <span class="text-slate-500">Minyak (<span id="calc-lbl-oil-km">130</span>km × RM0.125):</span>
@@ -281,7 +289,7 @@
             <div>
               <div class="flex justify-between items-center mb-1">
                 <label class="font-bold text-slate-700">Tuntutan Akhir Diluluskan (RM)</label>
-                <span class="text-[10px] text-slate-400 font-normal">Boleh laras (cth: RM 35)</span>
+                <span class="text-[10px] text-emerald-600 font-semibold italic">Boleh laras / Kosongkan jika belum pasti</span>
               </div>
               <input type="number" step="0.05" id="trip-final-amount" value="35.00" class="w-full border-2 border-emerald-500 bg-emerald-50/40 rounded-lg p-2.5 text-base font-extrabold text-emerald-800 outline-none" />
             </div>
@@ -300,7 +308,7 @@
               <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-slate-600"></i> Sejarah Transaksi Perbelanjaan
               </h3>
-              <p class="text-xs text-slate-500">Semua perbelanjaan boleh diedit atau dipadam pada bila-bila masa.</p>
+              <p class="text-xs text-slate-500">Klik terus pada butang RM untuk edit amaun pantas.</p>
             </div>
             <div class="flex items-center gap-2 self-start">
               <span id="badge-total-expenses" class="text-xs bg-rose-50 text-rose-600 px-3 py-1.5 rounded-full font-extrabold border border-rose-200">
@@ -319,13 +327,11 @@
                   <th class="py-2.5 px-3">Tarikh</th>
                   <th class="py-2.5 px-3">Kategori</th>
                   <th class="py-2.5 px-3">Butiran & Dibayar Oleh</th>
-                  <th class="py-2.5 px-3 text-right">Jumlah (RM)</th>
+                  <th class="py-2.5 px-3 text-right">Jumlah (RM) <span class="text-[10px] text-brand-600 lowercase font-normal">(klik utk edit)</span></th>
                   <th class="py-2.5 px-3 text-center">Tindakan</th>
                 </tr>
               </thead>
-              <tbody id="expense-tbody" class="divide-y divide-slate-100">
-                <!-- Rendered via JS -->
-              </tbody>
+              <tbody id="expense-tbody" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
         </div>
@@ -390,7 +396,7 @@
               <input type="text" id="input-acc-number" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none font-mono" />
             </div>
             <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2 px-4 rounded-xl shadow transition text-xs">
-              Simpan Maklumat Akaun
+              Simpan Maklumat Akaun (Awan)
             </button>
           </form>
         </div>
@@ -400,7 +406,7 @@
 
   </main>
 
-  <!-- MODAL EDIT PERBELANJAAN -->
+  <!-- MODAL EDIT PERBELANJAAN (LENGKAP) -->
   <div id="modal-edit-expense" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-5 space-y-4 text-xs">
       <div class="flex justify-between items-center border-b border-slate-100 pb-2">
@@ -438,12 +444,14 @@
           <label class="block font-medium text-slate-600 mb-1">Dibayar / Didahulukan Oleh</label>
           <select id="edit-exp-payer" class="w-full border border-slate-300 rounded-lg p-2 outline-none bg-white">
             <option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>
-            <!-- Member options injected -->
           </select>
         </div>
         <div>
-          <label class="block font-medium text-slate-600 mb-1">Jumlah Nilai (RM)</label>
-          <input type="number" step="0.01" min="0.01" id="edit-exp-amount" required class="w-full border border-slate-300 rounded-lg p-2 outline-none font-bold text-rose-600" />
+          <div class="flex justify-between items-center mb-1">
+            <label class="block font-medium text-slate-600">Jumlah Nilai (RM)</label>
+            <span class="text-[10px] text-emerald-600 font-semibold italic">Tidak wajib</span>
+          </div>
+          <input type="number" step="0.01" id="edit-exp-amount" placeholder="0.00" class="w-full border border-slate-300 rounded-lg p-2 outline-none font-bold text-rose-600" />
         </div>
 
         <div class="flex gap-2 pt-2">
@@ -459,11 +467,25 @@
   </div>
 
   <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
-    E-Bendahari Usrah Ridwanullah • GitHub Pages Ready • Perbelanjaan Fleksibel & Boleh Diedit
+    E-Bendahari Usrah Ridwanullah • GitHub Pages & Firebase Live Sync
   </footer>
 
-  <!-- SCRIPT LOGIK & DATA -->
+  <!-- SCRIPT LOGIK & SAMBUNGAN FIREBASE -->
   <script>
+    // ==========================================
+    // ⚙️ KONFIGURASI FIREBASE PROJEK AccRA
+    // ==========================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkHDesrq-l3BfyibVV2TtcyR8fmVPm38s",
+      authDomain: "accra-e55cd.firebaseapp.com",
+      databaseURL: "https://accra-e55cd-default-rtdb.asia-southeast1.firebasedatabase.app", // Sesuaikan jika lokasi berbeza
+      projectId: "accra-e55cd",
+      storageBucket: "accra-e55cd.firebasestorage.app",
+      messagingSenderId: "1015060089947",
+      appId: "1:1015060089947:web:4ccf91db8729317fa5437e",
+      measurementId: "G-4GPCJSQ0VQ"
+    };
+
     const MIN_RATE = 2.00;
     const RATE_OIL = 0.125;   // RM 0.125 / km
     const RATE_MILEAGE = 0.05; // RM 0.05 / km
@@ -490,18 +512,78 @@
       accNumber: "162000000000"
     };
 
-    // Load from LocalStorage (Expenses dimulakan KOSONG mengikut permintaan)
-    let members = JSON.parse(localStorage.getItem('usrah_members_v4')) || INITIAL_MEMBERS;
-    let dates = JSON.parse(localStorage.getItem('usrah_dates_v4')) || INITIAL_DATES;
-    let bankInfo = JSON.parse(localStorage.getItem('usrah_bank_info_v4')) || INITIAL_BANK;
-    let expenses = JSON.parse(localStorage.getItem('usrah_expenses_v4')) || [];
+    let members = INITIAL_MEMBERS;
+    let dates = INITIAL_DATES;
+    let bankInfo = INITIAL_BANK;
+    let expenses = [];
+    let dbRef = null;
+    let isFirebaseReady = false;
 
-    function saveData() {
-      localStorage.setItem('usrah_members_v4', JSON.stringify(members));
-      localStorage.setItem('usrah_dates_v4', JSON.stringify(dates));
-      localStorage.setItem('usrah_expenses_v4', JSON.stringify(expenses));
-      localStorage.setItem('usrah_bank_info_v4', JSON.stringify(bankInfo));
+    // INISIALISASI FIREBASE
+    try {
+      if (firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("GANTIKAN")) {
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        dbRef = db.ref('usrah_ridwanullah_live');
+        isFirebaseReady = true;
+
+        // REAL-TIME SYNC LISTENER
+        dbRef.on('value', (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            members = data.members || INITIAL_MEMBERS;
+            dates = data.dates || INITIAL_DATES;
+            bankInfo = data.bankInfo || INITIAL_BANK;
+            expenses = data.expenses || [];
+          } else {
+            saveDataToCloud();
+          }
+          updateSyncStatus(true);
+          renderAll();
+        }, (error) => {
+          console.error("Ralat Firebase:", error);
+          updateSyncStatus(false);
+        });
+
+      } else {
+        document.getElementById('firebase-alert').classList.remove('hidden');
+        updateSyncStatus(false);
+        // Fallback localStorage jika belum masukkan API key
+        members = JSON.parse(localStorage.getItem('usrah_members_v5')) || INITIAL_MEMBERS;
+        dates = JSON.parse(localStorage.getItem('usrah_dates_v5')) || INITIAL_DATES;
+        bankInfo = JSON.parse(localStorage.getItem('usrah_bank_v5')) || INITIAL_BANK;
+        expenses = JSON.parse(localStorage.getItem('usrah_exp_v5')) || [];
+        renderAll();
+      }
+    } catch (e) {
+      console.warn("Guna storan tempatan sementara.", e);
+      updateSyncStatus(false);
       renderAll();
+    }
+
+    function updateSyncStatus(isLive) {
+      const el = document.getElementById('sync-status');
+      if (isLive) {
+        el.className = "text-[10px] bg-emerald-400 text-brand-900 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-sm";
+        el.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-800 animate-pulse"></span> Segerak Nyata (Live)`;
+      } else {
+        el.className = "text-[10px] bg-amber-400 text-amber-950 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1";
+        el.innerHTML = `<i class="fa-solid fa-hard-drive"></i> Mod Tempatan`;
+      }
+    }
+
+    // SIMPAN DATA KE AWAN (FIREBASE)
+    function saveDataToCloud() {
+      const payload = { members, dates, bankInfo, expenses };
+      if (isFirebaseReady && dbRef) {
+        dbRef.set(payload);
+      } else {
+        localStorage.setItem('usrah_members_v5', JSON.stringify(members));
+        localStorage.setItem('usrah_dates_v5', JSON.stringify(dates));
+        localStorage.setItem('usrah_bank_v5', JSON.stringify(bankInfo));
+        localStorage.setItem('usrah_exp_v5', JSON.stringify(expenses));
+        renderAll();
+      }
     }
 
     // TAB SWITCHING
@@ -566,7 +648,6 @@
       document.getElementById('calc-auto-total').innerText = autoTotal.toFixed(2);
     }
 
-    // SUBMIT VEHICLE CLAIM
     function submitVehicleClaim() {
       const tripName = document.getElementById('trip-name').value.trim() || "Trip Kenderaan Usrah";
       let date = document.getElementById('trip-date').value || new Date().toISOString().slice(0, 10);
@@ -582,11 +663,9 @@
       const mileageCost = totalKm * RATE_MILEAGE;
       const payer = document.getElementById('trip-payer').value;
 
-      const finalAmount = parseFloat(document.getElementById('trip-final-amount').value);
-      if (isNaN(finalAmount) || finalAmount <= 0) {
-        alert("Sila masukkan nilai tuntutan yang sah.");
-        return;
-      }
+      // Amaun tidak wajib: jika kosong, ambil auto-total atau 0
+      const rawFinal = document.getElementById('trip-final-amount').value;
+      const finalAmount = rawFinal !== "" ? (parseFloat(rawFinal) || 0) : (oilCost + mileageCost + totalToll);
 
       const desc = `${tripName} (${totalKm}km: Minyak RM${oilCost.toFixed(2)}, Mileage RM${mileageCost.toFixed(2)}, Tol RM${totalToll.toFixed(2)})`;
 
@@ -599,36 +678,48 @@
         amount: finalAmount
       });
 
-      saveData();
+      saveDataToCloud();
       alert(`Tuntutan ${tripName} berjaya direkodkan!`);
     }
 
-    // TAMBAH BELANJA BIASA
+    // TAMBAH BELANJA BIASA (AMAUN TIDAK WAJIB)
     function handleAddExpense(e) {
       e.preventDefault();
       const date = document.getElementById('exp-date').value;
       const category = document.getElementById('exp-category').value;
       const desc = document.getElementById('exp-desc').value;
       const payer = document.getElementById('exp-payer').value;
-      const amount = parseFloat(document.getElementById('exp-amount').value);
-
-      if (!date || !desc || isNaN(amount) || amount <= 0) return;
-
-      expenses.unshift({ 
-        id: Date.now(), 
-        date, 
-        category, 
-        desc, 
-        payer, 
-        amount 
-      });
       
-      saveData();
+      // Ambil amaun jika ada, jika tiada anggap 0.00
+      const rawAmount = document.getElementById('exp-amount').value;
+      const amount = rawAmount !== "" ? (parseFloat(rawAmount) || 0) : 0;
+
+      if (!date || !desc) return;
+
+      expenses.unshift({ id: Date.now(), date, category, desc, payer, amount });
+      saveDataToCloud();
       e.target.reset();
       document.getElementById('exp-date').value = new Date().toISOString().slice(0, 10);
     }
 
-    // EDIT EXPENSE MODAL CONTROLS
+    // QUICK-EDIT AMAUN TERUS DARI JADUAL
+    function quickEditExpenseAmount(id) {
+      const item = expenses.find(x => x.id === id);
+      if (!item) return;
+
+      const input = prompt(
+        `Kemaskini jumlah perbelanjaan bagi:\n"${item.desc}"\n\nMasukkan nilai RM baru:`,
+        item.amount || 0
+      );
+
+      if (input !== null) {
+        const newAmt = parseFloat(input);
+        item.amount = !isNaN(newAmt) && newAmt >= 0 ? newAmt : 0;
+        saveDataToCloud();
+      }
+    }
+
+    // EDIT MODAL KAWALAN
     function openEditExpenseModal(id) {
       const item = expenses.find(x => x.id === id);
       if (!item) return;
@@ -638,7 +729,7 @@
       document.getElementById('edit-exp-category').value = item.category;
       document.getElementById('edit-exp-desc').value = item.desc;
       document.getElementById('edit-exp-payer').value = item.payer || "Tabung Usrah";
-      document.getElementById('edit-exp-amount').value = item.amount;
+      document.getElementById('edit-exp-amount').value = item.amount || 0;
 
       document.getElementById('modal-edit-expense').classList.remove('hidden');
     }
@@ -654,12 +745,13 @@
       const category = document.getElementById('edit-exp-category').value;
       const desc = document.getElementById('edit-exp-desc').value;
       const payer = document.getElementById('edit-exp-payer').value;
-      const amount = parseFloat(document.getElementById('edit-exp-amount').value);
+      const rawAmount = document.getElementById('edit-exp-amount').value;
+      const amount = rawAmount !== "" ? (parseFloat(rawAmount) || 0) : 0;
 
       const idx = expenses.findIndex(x => x.id === id);
       if (idx !== -1) {
         expenses[idx] = { id, date, category, desc, payer, amount };
-        saveData();
+        saveDataToCloud();
         closeEditModal();
       }
     }
@@ -667,18 +759,18 @@
     function deleteExpense(id) {
       if (confirm("Adakah anda pasti mahu memadam rekod belanja ini?")) {
         expenses = expenses.filter(x => x.id !== id);
-        saveData();
+        saveDataToCloud();
       }
     }
 
     function clearAllExpensesPrompt() {
       if (confirm("Kosongkan semua rekod perbelanjaan sekarang?")) {
         expenses = [];
-        saveData();
+        saveDataToCloud();
       }
     }
 
-    // TOGGLE / EDIT MATRIX INFAQ
+    // EDIT INFAQ MATRIX
     function editCellPayment(mIdx, dIdx) {
       const currentVal = members[mIdx].payments[dIdx] || 0;
       const memberName = members[mIdx].name;
@@ -696,7 +788,7 @@
         const parsed = parseFloat(input);
         if (!isNaN(parsed) && parsed >= 0) {
           members[mIdx].payments[dIdx] = parsed;
-          saveData();
+          saveDataToCloud();
         } else {
           alert("Sila masukkan nombor yang sah.");
         }
@@ -708,7 +800,7 @@
       if (newDate && newDate.trim() !== "") {
         dates.push(newDate.trim());
         members.forEach(m => m.payments.push(0));
-        saveData();
+        saveDataToCloud();
       }
     }
 
@@ -718,8 +810,8 @@
       bankInfo.bankName = document.getElementById('input-bank-name').value.trim();
       bankInfo.accHolder = document.getElementById('input-acc-holder').value.trim();
       bankInfo.accNumber = document.getElementById('input-acc-number').value.trim();
-      saveData();
-      alert("Maklumat akaun bank berjaya disimpan!");
+      saveDataToCloud();
+      alert("Maklumat akaun bank disimpan ke awan!");
     }
 
     function uploadQrCode(event) {
@@ -728,7 +820,7 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           document.getElementById('qr-image').src = e.target.result;
-          localStorage.setItem('usrah_qr_img_v4', e.target.result);
+          localStorage.setItem('usrah_qr_img_v5', e.target.result);
         };
         reader.readAsDataURL(file);
       }
@@ -752,7 +844,7 @@
       window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // POPULATE MEMBER OPTIONS INTO PAYER DROPDOWNS
+    // DROPDOWNS
     function updatePayerDropdowns() {
       const expPayer = document.getElementById('exp-payer');
       const tripPayer = document.getElementById('trip-payer');
@@ -760,9 +852,9 @@
 
       const memberOptions = members.map(m => `<option value="${m.name}">${m.name}</option>`).join('');
 
-      expPayer.innerHTML = `<option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>` + memberOptions;
-      tripPayer.innerHTML = memberOptions + `<option value="Tabung Usrah">🏦 Tabung Usrah (Bendahari)</option>`;
-      editExpPayer.innerHTML = `<option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>` + memberOptions;
+      if (expPayer) expPayer.innerHTML = `<option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>` + memberOptions;
+      if (tripPayer) tripPayer.innerHTML = memberOptions + `<option value="Tabung Usrah">🏦 Tabung Usrah (Bendahari)</option>`;
+      if (editExpPayer) editExpPayer.innerHTML = `<option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>` + memberOptions;
     }
 
     // RENDER SEMUA
@@ -799,7 +891,7 @@
 
           return `
             <td class="py-2.5 px-2 text-center">
-              <button onclick="editCellPayment(${mIdx}, ${dIdx})" title="Klik untuk edit amaun"
+              <button onclick="editCellPayment(${mIdx}, ${dIdx})" title="Klik untuk ubah amaun"
                 class="px-2 py-1 rounded text-[11px] font-semibold transition ${
                   isMore 
                     ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' 
@@ -824,7 +916,7 @@
         `;
         matrixBody.appendChild(tr);
 
-        // Status Pengiraan
+        // Status Kedudukan
         const diff = memberPaidTotal - targetMinPerMember;
         let statusBadge = "";
         let dueAmount = 0;
@@ -856,8 +948,8 @@
         summaryBody.appendChild(sTr);
       });
 
-      // 2. Expenses Table (Dengan Butang Edit & Siapa Bayar)
-      const totalExpense = expenses.reduce((acc, curr) => acc + curr.amount, 0);
+      // 2. Jadual Perbelanjaan (Amaun Boleh Klik untuk Edit)
+      const totalExpense = expenses.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
       document.getElementById('badge-total-expenses').innerText = `Total: RM ${totalExpense.toFixed(2)}`;
 
       const expBody = document.getElementById('expense-tbody');
@@ -867,7 +959,7 @@
         expBody.innerHTML = `
           <tr>
             <td colspan="5" class="py-6 text-center text-slate-400 italic">
-              Tiada rekod perbelanjaan lagi. Sila masukkan butiran perbelanjaan di borang sebelah.
+              Tiada rekod perbelanjaan lagi. Rekod di borang sebelah untuk memulakan.
             </td>
           </tr>
         `;
@@ -876,6 +968,7 @@
           const isTransport = x.category.includes("Kenderaan") || x.category.includes("Pengangkutan");
           const payerName = x.payer || "Tabung Usrah";
           const isDirectFromTabung = payerName.includes("Tabung Usrah");
+          const amtVal = parseFloat(x.amount) || 0;
 
           const tr = document.createElement('tr');
           tr.className = "hover:bg-slate-50 transition";
@@ -892,9 +985,18 @@
                 <i class="fa-solid fa-user-check text-[10px]"></i> Dibayar oleh: ${payerName}
               </span>
             </td>
-            <td class="py-2.5 px-3 text-right font-extrabold text-rose-600 whitespace-nowrap">RM ${x.amount.toFixed(2)}</td>
+            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+              <button onclick="quickEditExpenseAmount(${x.id})" title="Klik untuk edit nilai RM"
+                class="px-2.5 py-1 rounded-lg text-xs font-extrabold transition border ${
+                  amtVal > 0 
+                    ? 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100' 
+                    : 'bg-slate-100 text-slate-400 border-slate-200 hover:bg-slate-200'
+                }">
+                ${amtVal > 0 ? `RM ${amtVal.toFixed(2)}` : 'RM 0.00 (Set)'}
+              </button>
+            </td>
             <td class="py-2.5 px-3 text-center whitespace-nowrap space-x-2">
-              <button onclick="openEditExpenseModal(${x.id})" title="Kemaskini / Edit" class="text-blue-500 hover:text-blue-700 transition p-1">
+              <button onclick="openEditExpenseModal(${x.id})" title="Kemaskini Penuh" class="text-blue-500 hover:text-blue-700 transition p-1">
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>
               <button onclick="deleteExpense(${x.id})" title="Padam" class="text-slate-400 hover:text-rose-600 transition p-1">
@@ -922,12 +1024,11 @@
       document.getElementById('input-acc-holder').value = bankInfo.accHolder;
       document.getElementById('input-acc-number').value = bankInfo.accNumber;
 
-      // QR Image
-      const savedQr = localStorage.getItem('usrah_qr_img_v4');
+      const savedQr = localStorage.getItem('usrah_qr_img_v5');
       if (savedQr) document.getElementById('qr-image').src = savedQr;
     }
 
-    // BACKUP
+    // BACKUP LOCAL JSON
     function exportData() {
       const data = { members, dates, expenses, bankInfo };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -944,7 +1045,6 @@
       const tripDate = document.getElementById('trip-date');
       if (expDate) expDate.value = today;
       if (tripDate) tripDate.value = today;
-      renderAll();
     };
   </script>
 </body>
