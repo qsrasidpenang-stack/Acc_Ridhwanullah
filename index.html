@@ -491,12 +491,11 @@
     const RATE_OIL = 0.125;   // RM 0.125 / km
     const RATE_MILEAGE = 0.05; // RM 0.05 / km
 
-    // DATA ASAL AHLI & TARIKH
+    // DATA ASAL AHLI (NIKI TELAH DIBUANG)
     const INITIAL_MEMBERS = [
       { id: 1, name: "Kak Nisa", payments: [2, 2, 0, 0, 0, 0, 0, 0, 0, 0] },
       { id: 2, name: "Sakinah", payments: [2, 2, 2, 2, 2, 0, 0, 0, 0, 0] },
       { id: 3, name: "Farah Sya", payments: [2, 2, 0, 0, 0, 0, 0, 0, 0, 0] },
-      { id: 4, name: "Niki", payments: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
       { id: 5, name: "Firzanah", payments: [2, 2, 2, 2, 2, 2, 2, 2, 2, 0] },
       { id: 6, name: "Nabila", payments: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2] },
       { id: 7, name: "Athirah", payments: [2, 2, 2, 2, 2, 2, 2, 0, 0, 0] }
@@ -517,7 +516,7 @@
     let dates = INITIAL_DATES;
     let bankInfo = INITIAL_BANK;
     let expenses = [];
-    let qrImageCloud = ""; // Gambar QR Awan
+    let qrImageCloud = "";
     let dbRef = null;
     let isFirebaseReady = false;
 
@@ -533,13 +532,22 @@
         dbRef.on('value', (snapshot) => {
           const data = snapshot.val();
           if (data) {
-            members = data.members || INITIAL_MEMBERS;
+            let rawMembers = data.members || INITIAL_MEMBERS;
+            
+            // AUTOMATIK BUANG NIKI DARI DATABASE AWAN JIKA MASIH WUJUD
+            const hadNiki = rawMembers.some(m => m.name.trim().toLowerCase() === 'niki');
+            members = rawMembers.filter(m => m.name.trim().toLowerCase() !== 'niki');
+
             dates = data.dates || INITIAL_DATES;
             bankInfo = data.bankInfo || INITIAL_BANK;
             expenses = data.expenses || [];
             if (data.qrImage) {
               qrImageCloud = data.qrImage;
               document.getElementById('qr-image').src = qrImageCloud;
+            }
+
+            if (hadNiki) {
+              saveDataToCloud(); // Kemaskini terus ke Firebase supaya terpadam secara kekal di awan
             }
           } else {
             saveDataToCloud();
@@ -554,8 +562,8 @@
       } else {
         document.getElementById('firebase-alert').classList.remove('hidden');
         updateSyncStatus(false);
-        // Fallback localStorage jika offline
-        members = JSON.parse(localStorage.getItem('usrah_members_v5')) || INITIAL_MEMBERS;
+        let rawMembers = JSON.parse(localStorage.getItem('usrah_members_v5')) || INITIAL_MEMBERS;
+        members = rawMembers.filter(m => m.name.trim().toLowerCase() !== 'niki');
         dates = JSON.parse(localStorage.getItem('usrah_dates_v5')) || INITIAL_DATES;
         bankInfo = JSON.parse(localStorage.getItem('usrah_bank_v5')) || INITIAL_BANK;
         expenses = JSON.parse(localStorage.getItem('usrah_exp_v5')) || [];
@@ -829,7 +837,6 @@
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-          // Kecilkan saiz gambar secara automatik ke max 400px (supaya ringan ~30KB)
           const canvas = document.createElement('canvas');
           const maxDim = 400;
           let w = img.width;
@@ -846,9 +853,7 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
           
-          // Tukar kepada format JPEG mampat
           const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
-          
           qrImageCloud = compressedBase64;
           document.getElementById('qr-image').src = qrImageCloud;
           saveDataToCloud();
