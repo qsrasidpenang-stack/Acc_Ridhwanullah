@@ -70,7 +70,7 @@
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Dibelanjakan</span>
           <p id="stat-belanja" class="text-2xl font-extrabold text-rose-600 mt-1">RM 0.00</p>
-          <span class="text-[11px] text-slate-400">Trip kenderaan, makan & modul</span>
+          <span class="text-[11px] text-slate-400">Belanja & tuntutan semasa</span>
         </div>
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Baki Bersih Semasa</span>
@@ -150,10 +150,9 @@
     <!-- 3. PERBELANJAAN & TUNTUTAN KENDERAAN TAB -->
     <section id="tab-belanja" class="tab-content hidden space-y-6">
 
-      <!-- Pilihan Sub-Borang (Biasa vs Kenderaan) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- KIRI: BORANG INPUT (Tabs Kecil: Biasa vs Kenderaan) -->
+        <!-- KIRI: BORANG INPUT BELANJA / KENDERAAN -->
         <div class="lg:col-span-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
           
           <div class="flex border-b border-slate-200 pb-2 justify-between items-center">
@@ -190,6 +189,13 @@
             <div>
               <label class="block font-medium text-slate-600 mb-1">Butiran / Catatan</label>
               <input type="text" id="exp-desc" placeholder="Cth: Air mineral & kuih muih sesi 4" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Dibayar / Didahulukan Oleh</label>
+              <select id="exp-payer" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+                <option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>
+                <!-- Opsyen nama ahli akan dimasukkan secara automatik -->
+              </select>
             </div>
             <div>
               <label class="block font-medium text-slate-600 mb-1">Jumlah Nilai Belanja (RM)</label>
@@ -234,7 +240,6 @@
               <p class="text-[10px] text-slate-400 mt-0.5">Jumlah jarak: <span id="trip-total-km" class="font-bold text-slate-700">130</span> KM</p>
             </div>
 
-            <!-- Rincian Tol -->
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="block font-medium text-slate-600 mb-1">Tol Pergi (RM)</label>
@@ -244,6 +249,13 @@
                 <label class="block font-medium text-slate-600 mb-1">Tol Balik (RM)</label>
                 <input type="number" id="trip-toll-back" value="5.00" step="0.10" oninput="calculateTripCost()" class="w-full border border-slate-300 rounded-lg p-2 outline-none" />
               </div>
+            </div>
+
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Pemandu / Didahulukan Oleh</label>
+              <select id="trip-payer" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+                <!-- Opsyen nama ahli dimasukkan automatik -->
+              </select>
             </div>
 
             <!-- Jadual Live Calculation -->
@@ -257,7 +269,7 @@
                 <span class="font-bold text-slate-700">RM <span id="calc-mileage">6.50</span></span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-500">Jumlah Tol (Pergi+Balik):</span>
+                <span class="text-slate-500">Jumlah Tol:</span>
                 <span class="font-bold text-slate-700">RM <span id="calc-toll">10.00</span></span>
               </div>
               <div class="border-t border-slate-200 pt-1 flex justify-between text-xs text-brand-800 font-bold">
@@ -266,11 +278,10 @@
               </div>
             </div>
 
-            <!-- Nilai Tuntutan Akhir (Boleh Laras) -->
             <div>
               <div class="flex justify-between items-center mb-1">
                 <label class="font-bold text-slate-700">Tuntutan Akhir Diluluskan (RM)</label>
-                <span class="text-[10px] text-slate-400 font-normal">Boleh laras (cth: genap RM 35)</span>
+                <span class="text-[10px] text-slate-400 font-normal">Boleh laras (cth: RM 35)</span>
               </div>
               <input type="number" step="0.05" id="trip-final-amount" value="35.00" class="w-full border-2 border-emerald-500 bg-emerald-50/40 rounded-lg p-2.5 text-base font-extrabold text-emerald-800 outline-none" />
             </div>
@@ -282,18 +293,23 @@
 
         </div>
 
-        <!-- KANAN: JADUAL ALIRAN PERBELANJAAN KELUAR -->
+        <!-- KANAN: JADUAL ALIRAN PERBELANJAAN (EDITABLE) -->
         <div class="lg:col-span-7 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-slate-600"></i> Sejarah Transaksi Perbelanjaan
               </h3>
-              <p class="text-xs text-slate-500">Semua perbelanjaan termasuk tuntutan kenderaan memotong baki tabung secara automatik.</p>
+              <p class="text-xs text-slate-500">Semua perbelanjaan boleh diedit atau dipadam pada bila-bila masa.</p>
             </div>
-            <span id="badge-total-expenses" class="text-xs bg-rose-50 text-rose-600 px-3 py-1.5 rounded-full font-extrabold border border-rose-200 self-start">
-              Total: RM 0.00
-            </span>
+            <div class="flex items-center gap-2 self-start">
+              <span id="badge-total-expenses" class="text-xs bg-rose-50 text-rose-600 px-3 py-1.5 rounded-full font-extrabold border border-rose-200">
+                Total: RM 0.00
+              </span>
+              <button onclick="clearAllExpensesPrompt()" title="Kosongkan senarai belanja" class="text-xs text-slate-400 hover:text-rose-600 px-2 py-1 transition border border-slate-200 rounded-lg">
+                <i class="fa-solid fa-trash-arrow-up"></i> Kosongkan
+              </button>
+            </div>
           </div>
 
           <div class="overflow-x-auto border border-slate-200 rounded-xl">
@@ -302,9 +318,9 @@
                 <tr>
                   <th class="py-2.5 px-3">Tarikh</th>
                   <th class="py-2.5 px-3">Kategori</th>
-                  <th class="py-2.5 px-3">Butiran & Kiraan</th>
+                  <th class="py-2.5 px-3">Butiran & Dibayar Oleh</th>
                   <th class="py-2.5 px-3 text-right">Jumlah (RM)</th>
-                  <th class="py-2.5 px-3 text-center">Padam</th>
+                  <th class="py-2.5 px-3 text-center">Tindakan</th>
                 </tr>
               </thead>
               <tbody id="expense-tbody" class="divide-y divide-slate-100">
@@ -317,11 +333,10 @@
       </div>
     </section>
 
-    <!-- 4. QR CODE & MAKLUMAT BANK (EDITABLE) TAB -->
+    <!-- 4. QR CODE & MAKLUMAT BANK TAB -->
     <section id="tab-qr" class="tab-content hidden space-y-6">
       <div class="max-w-xl mx-auto space-y-6">
         
-        <!-- Paparan Kad Bayaran -->
         <div class="bg-white rounded-3xl shadow-sm border border-slate-200 text-center p-6">
           <span class="inline-block bg-brand-100 text-brand-800 text-xs px-3 py-1 rounded-full font-semibold mb-2">
             Saluran Rasmi Bayaran Usrah
@@ -329,7 +344,6 @@
           <h2 class="text-lg font-bold text-slate-800">Imbas QR DuitNow</h2>
           <p class="text-xs text-slate-500 mb-5">Rujukan transaksi: <b class="text-brand-700">Infaq Usrah [Nama Anda]</b></p>
 
-          <!-- QR View & Upload -->
           <div class="bg-slate-50 border-2 border-dashed border-slate-200 p-4 rounded-2xl mx-auto inline-block max-w-[260px] relative group">
             <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=DuitNow-Kutipan-Usrah-Ridwanullah" alt="QR Bayaran" class="w-56 h-56 object-contain rounded-xl shadow-sm bg-white" />
             <label for="qr-upload" class="cursor-pointer text-[11px] text-brand-700 bg-white border border-slate-300 hover:bg-slate-100 px-3 py-1.5 rounded-full absolute bottom-2 left-1/2 -translate-x-1/2 shadow font-medium whitespace-nowrap">
@@ -338,7 +352,6 @@
             <input type="file" id="qr-upload" accept="image/*" class="hidden" onchange="uploadQrCode(event)" />
           </div>
 
-          <!-- Paparan Maklumat Akaun -->
           <div class="mt-6 bg-slate-50 rounded-2xl p-4 text-left border border-slate-200 space-y-2.5 text-xs">
             <div class="flex justify-between items-center">
               <span class="text-slate-500 font-medium">Bank:</span>
@@ -359,7 +372,6 @@
           </button>
         </div>
 
-        <!-- Borang Kemaskini Maklumat Bank (Editable Form) -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
           <h3 class="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">
             <i class="fa-solid fa-pen-to-square text-brand-600"></i> Kemaskini Maklumat Bank Bendahari
@@ -388,8 +400,66 @@
 
   </main>
 
+  <!-- MODAL EDIT PERBELANJAAN -->
+  <div id="modal-edit-expense" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-5 space-y-4 text-xs">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+        <h3 class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+          <i class="fa-solid fa-pen-to-square text-brand-600"></i> Kemaskini Perbelanjaan
+        </h3>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 text-base">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="form-edit-expense" onsubmit="handleSaveEditExpense(event)" class="space-y-3">
+        <input type="hidden" id="edit-exp-id" />
+        <div>
+          <label class="block font-medium text-slate-600 mb-1">Tarikh</label>
+          <input type="date" id="edit-exp-date" required class="w-full border border-slate-300 rounded-lg p-2 outline-none" />
+        </div>
+        <div>
+          <label class="block font-medium text-slate-600 mb-1">Kategori</label>
+          <select id="edit-exp-category" required class="w-full border border-slate-300 rounded-lg p-2 outline-none">
+            <option value="🍱 Makanan/Jamuan">🍱 Makanan / Jamuan</option>
+            <option value="📖 Modul/Kitab">📖 Bahan / Fotostat / Kitab</option>
+            <option value="🎁 Cenderahati">🎁 Cenderahati / Hadiah</option>
+            <option value="🤝 Kebajikan">🤝 Kebajikan / Sumbangan</option>
+            <option value="🚗 Pengangkutan / Kenderaan">🚗 Pengangkutan / Kenderaan</option>
+            <option value="🏸 Aktiviti/Riadah">🏸 Aktiviti Luar / Sewa</option>
+            <option value="📦 Lain-lain">📦 Lain-lain Keperluan</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium text-slate-600 mb-1">Butiran / Catatan</label>
+          <input type="text" id="edit-exp-desc" required class="w-full border border-slate-300 rounded-lg p-2 outline-none font-medium" />
+        </div>
+        <div>
+          <label class="block font-medium text-slate-600 mb-1">Dibayar / Didahulukan Oleh</label>
+          <select id="edit-exp-payer" class="w-full border border-slate-300 rounded-lg p-2 outline-none bg-white">
+            <option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>
+            <!-- Member options injected -->
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium text-slate-600 mb-1">Jumlah Nilai (RM)</label>
+          <input type="number" step="0.01" min="0.01" id="edit-exp-amount" required class="w-full border border-slate-300 rounded-lg p-2 outline-none font-bold text-rose-600" />
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeEditModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-xl font-medium transition">
+            Batal
+          </button>
+          <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-xl font-semibold transition">
+            Simpan Perubahan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
-    E-Bendahari Usrah Ridwanullah • GitHub Pages Ready • Dilengkapi Kiraan Mileage & Minyak
+    E-Bendahari Usrah Ridwanullah • GitHub Pages Ready • Perbelanjaan Fleksibel & Boleh Diedit
   </footer>
 
   <!-- SCRIPT LOGIK & DATA -->
@@ -398,7 +468,7 @@
     const RATE_OIL = 0.125;   // RM 0.125 / km
     const RATE_MILEAGE = 0.05; // RM 0.05 / km
 
-    // DATA ASAL
+    // DATA ASAL AHLI & TARIKH
     const INITIAL_MEMBERS = [
       { id: 1, name: "Kak Nisa", payments: [2, 2, 0, 0, 0, 0, 0, 0, 0, 0] },
       { id: 2, name: "Sakinah", payments: [2, 2, 2, 2, 2, 0, 0, 0, 0, 0] },
@@ -420,32 +490,17 @@
       accNumber: "162000000000"
     };
 
-    // Load from LocalStorage
-    let members = JSON.parse(localStorage.getItem('usrah_members_v3')) || INITIAL_MEMBERS;
-    let dates = JSON.parse(localStorage.getItem('usrah_dates_v3')) || INITIAL_DATES;
-    let bankInfo = JSON.parse(localStorage.getItem('usrah_bank_info_v3')) || INITIAL_BANK;
-    let expenses = JSON.parse(localStorage.getItem('usrah_expenses_v3')) || [
-      { 
-        id: 101, 
-        date: "2026-08-15", 
-        category: "🚗 Pengangkutan / Kenderaan", 
-        desc: "Trip to Serdang (130km: Minyak RM16.25, Mileage RM6.50, Tol RM10.00)", 
-        amount: 35.00 
-      },
-      { 
-        id: 102, 
-        date: "2026-07-15", 
-        category: "🍱 Makanan/Jamuan", 
-        desc: "Kuih-muih & Air Usrah", 
-        amount: 14.50 
-      }
-    ];
+    // Load from LocalStorage (Expenses dimulakan KOSONG mengikut permintaan)
+    let members = JSON.parse(localStorage.getItem('usrah_members_v4')) || INITIAL_MEMBERS;
+    let dates = JSON.parse(localStorage.getItem('usrah_dates_v4')) || INITIAL_DATES;
+    let bankInfo = JSON.parse(localStorage.getItem('usrah_bank_info_v4')) || INITIAL_BANK;
+    let expenses = JSON.parse(localStorage.getItem('usrah_expenses_v4')) || [];
 
     function saveData() {
-      localStorage.setItem('usrah_members_v3', JSON.stringify(members));
-      localStorage.setItem('usrah_dates_v3', JSON.stringify(dates));
-      localStorage.setItem('usrah_expenses_v3', JSON.stringify(expenses));
-      localStorage.setItem('usrah_bank_info_v3', JSON.stringify(bankInfo));
+      localStorage.setItem('usrah_members_v4', JSON.stringify(members));
+      localStorage.setItem('usrah_dates_v4', JSON.stringify(dates));
+      localStorage.setItem('usrah_expenses_v4', JSON.stringify(expenses));
+      localStorage.setItem('usrah_bank_info_v4', JSON.stringify(bankInfo));
       renderAll();
     }
 
@@ -466,7 +521,7 @@
       }
     }
 
-    // EXPENSE SUB-FORM TOGGLE
+    // TOGGLE EXPENSE FORM (BIASA VS KENDERAAN)
     function toggleExpenseForm(type) {
       const btnBiasa = document.getElementById('btn-sub-biasa');
       const btnKenderaan = document.getElementById('btn-sub-kenderaan');
@@ -501,7 +556,6 @@
       const mileageCost = totalKm * RATE_MILEAGE;
       const autoTotal = oilCost + mileageCost + totalToll;
 
-      // Update UI Labels
       document.getElementById('trip-total-km').innerText = totalKm;
       document.getElementById('calc-lbl-oil-km').innerText = totalKm;
       document.getElementById('calc-lbl-mil-km').innerText = totalKm;
@@ -515,10 +569,7 @@
     // SUBMIT VEHICLE CLAIM
     function submitVehicleClaim() {
       const tripName = document.getElementById('trip-name').value.trim() || "Trip Kenderaan Usrah";
-      let date = document.getElementById('trip-date').value;
-      if (!date) {
-        date = new Date().toISOString().slice(0, 10);
-      }
+      let date = document.getElementById('trip-date').value || new Date().toISOString().slice(0, 10);
       
       const oneWayKm = parseFloat(document.getElementById('trip-km-one-way').value) || 0;
       const multiplier = parseInt(document.getElementById('trip-type').value) || 2;
@@ -529,10 +580,11 @@
       const totalToll = tollGo + tollBack;
       const oilCost = totalKm * RATE_OIL;
       const mileageCost = totalKm * RATE_MILEAGE;
+      const payer = document.getElementById('trip-payer').value;
 
       const finalAmount = parseFloat(document.getElementById('trip-final-amount').value);
       if (isNaN(finalAmount) || finalAmount <= 0) {
-        alert("Sila masukkan nilai tuntutan akhir yang sah.");
+        alert("Sila masukkan nilai tuntutan yang sah.");
         return;
       }
 
@@ -543,14 +595,90 @@
         date: date,
         category: "🚗 Pengangkutan / Kenderaan",
         desc: desc,
+        payer: payer,
         amount: finalAmount
       });
 
       saveData();
-      alert(`Tuntutan ${tripName} berjaya direkodkan sebanyak RM ${finalAmount.toFixed(2)}!`);
+      alert(`Tuntutan ${tripName} berjaya direkodkan!`);
     }
 
-    // TOGGLE / EDIT MATRIX CELL
+    // TAMBAH BELANJA BIASA
+    function handleAddExpense(e) {
+      e.preventDefault();
+      const date = document.getElementById('exp-date').value;
+      const category = document.getElementById('exp-category').value;
+      const desc = document.getElementById('exp-desc').value;
+      const payer = document.getElementById('exp-payer').value;
+      const amount = parseFloat(document.getElementById('exp-amount').value);
+
+      if (!date || !desc || isNaN(amount) || amount <= 0) return;
+
+      expenses.unshift({ 
+        id: Date.now(), 
+        date, 
+        category, 
+        desc, 
+        payer, 
+        amount 
+      });
+      
+      saveData();
+      e.target.reset();
+      document.getElementById('exp-date').value = new Date().toISOString().slice(0, 10);
+    }
+
+    // EDIT EXPENSE MODAL CONTROLS
+    function openEditExpenseModal(id) {
+      const item = expenses.find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById('edit-exp-id').value = item.id;
+      document.getElementById('edit-exp-date').value = item.date;
+      document.getElementById('edit-exp-category').value = item.category;
+      document.getElementById('edit-exp-desc').value = item.desc;
+      document.getElementById('edit-exp-payer').value = item.payer || "Tabung Usrah";
+      document.getElementById('edit-exp-amount').value = item.amount;
+
+      document.getElementById('modal-edit-expense').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('modal-edit-expense').classList.add('hidden');
+    }
+
+    function handleSaveEditExpense(e) {
+      e.preventDefault();
+      const id = parseInt(document.getElementById('edit-exp-id').value);
+      const date = document.getElementById('edit-exp-date').value;
+      const category = document.getElementById('edit-exp-category').value;
+      const desc = document.getElementById('edit-exp-desc').value;
+      const payer = document.getElementById('edit-exp-payer').value;
+      const amount = parseFloat(document.getElementById('edit-exp-amount').value);
+
+      const idx = expenses.findIndex(x => x.id === id);
+      if (idx !== -1) {
+        expenses[idx] = { id, date, category, desc, payer, amount };
+        saveData();
+        closeEditModal();
+      }
+    }
+
+    function deleteExpense(id) {
+      if (confirm("Adakah anda pasti mahu memadam rekod belanja ini?")) {
+        expenses = expenses.filter(x => x.id !== id);
+        saveData();
+      }
+    }
+
+    function clearAllExpensesPrompt() {
+      if (confirm("Kosongkan semua rekod perbelanjaan sekarang?")) {
+        expenses = [];
+        saveData();
+      }
+    }
+
+    // TOGGLE / EDIT MATRIX INFAQ
     function editCellPayment(mIdx, dIdx) {
       const currentVal = members[mIdx].payments[dIdx] || 0;
       const memberName = members[mIdx].name;
@@ -560,7 +688,7 @@
         `Kutipan ${memberName} untuk sesi ${sessionDate}:\n\n` +
         `• Masukkan '0' jika belum bayar.\n` +
         `• Minima infaq adalah RM 2.\n` +
-        `• Boleh masukkan amaun lebih jika ingin infaq lebih (cth: 5 atau 10).`,
+        `• Masukkan amaun lebih jika ingin infaq lebih (cth: 5 atau 10).`,
         currentVal === 0 ? "2" : currentVal
       );
 
@@ -570,39 +698,16 @@
           members[mIdx].payments[dIdx] = parsed;
           saveData();
         } else {
-          alert("Sila masukkan nilai angka yang sah.");
+          alert("Sila masukkan nombor yang sah.");
         }
       }
     }
 
-    // ADD NEW SESSION
     function addNewSessionPrompt() {
       const newDate = prompt("Masukkan tarikh sesi usrah baru (cth: 13/9/26):");
       if (newDate && newDate.trim() !== "") {
         dates.push(newDate.trim());
         members.forEach(m => m.payments.push(0));
-        saveData();
-      }
-    }
-
-    // HANDLE EXPENSE BIASA
-    function handleAddExpense(e) {
-      e.preventDefault();
-      const date = document.getElementById('exp-date').value;
-      const category = document.getElementById('exp-category').value;
-      const desc = document.getElementById('exp-desc').value;
-      const amount = parseFloat(document.getElementById('exp-amount').value);
-
-      if (!date || !desc || isNaN(amount) || amount <= 0) return;
-
-      expenses.unshift({ id: Date.now(), date, category, desc, amount });
-      saveData();
-      e.target.reset();
-    }
-
-    function deleteExpense(id) {
-      if (confirm("Adakah anda pasti mahu memadam rekod belanja ini?")) {
-        expenses = expenses.filter(x => x.id !== id);
         saveData();
       }
     }
@@ -617,14 +722,13 @@
       alert("Maklumat akaun bank berjaya disimpan!");
     }
 
-    // QR UPLOAD
     function uploadQrCode(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
           document.getElementById('qr-image').src = e.target.result;
-          localStorage.setItem('usrah_qr_img_v3', e.target.result);
+          localStorage.setItem('usrah_qr_img_v4', e.target.result);
         };
         reader.readAsDataURL(file);
       }
@@ -635,11 +739,11 @@
       alert("No. akaun disalin: " + bankInfo.accNumber);
     }
 
-    // WHATSAPP GENERATOR
+    // WHATSAPP
     function sendWhatsApp(memberName, dueAmount, extraAmount) {
       let msg = "";
       if (dueAmount > 0) {
-        msg = `Salam ${memberName}, peringatan mesra daripada Bendahari Usrah Ridwanullah. Setakat ini terdapat tunggakan tabung sebanyak *RM ${dueAmount.toFixed(2)}* (berasaskan min infaq RM 2/sesi). Boleh rujuk maklumat akaun tabung untuk bayaran ya. Jazakallahu khair! ✨`;
+        msg = `Salam ${memberName}, peringatan mesra daripada Bendahari Usrah Ridwanullah. Setakat ini terdapat tunggakan tabung sebanyak *RM ${dueAmount.toFixed(2)}* (min RM 2/sesi). Boleh rujuk maklumat akaun tabung untuk bayaran ya. Jazakallahu khair! ✨`;
       } else if (extraAmount > 0) {
         msg = `Salam ${memberName}, terima kasih atas sumbangan infaq tabung usrah sebanyak *RM ${extraAmount.toFixed(2)}* melebihi sasaran minima. Semoga Allah memberkati rezeki anda! 🤲`;
       } else {
@@ -648,11 +752,26 @@
       window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
+    // POPULATE MEMBER OPTIONS INTO PAYER DROPDOWNS
+    function updatePayerDropdowns() {
+      const expPayer = document.getElementById('exp-payer');
+      const tripPayer = document.getElementById('trip-payer');
+      const editExpPayer = document.getElementById('edit-exp-payer');
+
+      const memberOptions = members.map(m => `<option value="${m.name}">${m.name}</option>`).join('');
+
+      expPayer.innerHTML = `<option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>` + memberOptions;
+      tripPayer.innerHTML = memberOptions + `<option value="Tabung Usrah">🏦 Tabung Usrah (Bendahari)</option>`;
+      editExpPayer.innerHTML = `<option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>` + memberOptions;
+    }
+
     // RENDER SEMUA
     function renderAll() {
       let totalActualInflow = 0;
       let totalDueAll = 0;
       const targetMinPerMember = dates.length * MIN_RATE;
+
+      updatePayerDropdowns();
 
       // 1. Matriks Kutipan
       const matrixHead = document.getElementById('matrix-head');
@@ -696,7 +815,6 @@
 
         totalActualInflow += memberPaidTotal;
 
-        // Row Matriks
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition";
         tr.innerHTML = `
@@ -706,7 +824,7 @@
         `;
         matrixBody.appendChild(tr);
 
-        // Status Pengiraan Logik
+        // Status Pengiraan
         const diff = memberPaidTotal - targetMinPerMember;
         let statusBadge = "";
         let dueAmount = 0;
@@ -723,7 +841,6 @@
           statusBadge = `<span class="inline-block bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-check"></i> Selesai (RM ${memberPaidTotal.toFixed(2)})</span>`;
         }
 
-        // Row Summary
         const sTr = document.createElement('tr');
         sTr.innerHTML = `
           <td class="py-3 px-3 font-semibold text-slate-800">${m.name}</td>
@@ -739,28 +856,55 @@
         summaryBody.appendChild(sTr);
       });
 
-      // 2. Expenses Table
+      // 2. Expenses Table (Dengan Butang Edit & Siapa Bayar)
       const totalExpense = expenses.reduce((acc, curr) => acc + curr.amount, 0);
       document.getElementById('badge-total-expenses').innerText = `Total: RM ${totalExpense.toFixed(2)}`;
 
       const expBody = document.getElementById('expense-tbody');
       expBody.innerHTML = '';
-      expenses.forEach(x => {
-        const isTransport = x.category.includes("Kenderaan") || x.category.includes("Pengangkutan");
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">${x.date}</td>
-          <td class="py-2.5 px-3"><span class="${isTransport ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-700'} px-2 py-0.5 rounded font-medium text-[11px] whitespace-nowrap">${x.category}</span></td>
-          <td class="py-2.5 px-3 font-medium text-slate-700">${x.desc}</td>
-          <td class="py-2.5 px-3 text-right font-extrabold text-rose-600 whitespace-nowrap">RM ${x.amount.toFixed(2)}</td>
-          <td class="py-2.5 px-3 text-center">
-            <button onclick="deleteExpense(${x.id})" class="text-slate-400 hover:text-rose-600 transition">
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
-          </td>
+
+      if (expenses.length === 0) {
+        expBody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-6 text-center text-slate-400 italic">
+              Tiada rekod perbelanjaan lagi. Sila masukkan butiran perbelanjaan di borang sebelah.
+            </td>
+          </tr>
         `;
-        expBody.appendChild(tr);
-      });
+      } else {
+        expenses.forEach(x => {
+          const isTransport = x.category.includes("Kenderaan") || x.category.includes("Pengangkutan");
+          const payerName = x.payer || "Tabung Usrah";
+          const isDirectFromTabung = payerName.includes("Tabung Usrah");
+
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50 transition";
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">${x.date}</td>
+            <td class="py-2.5 px-3">
+              <span class="${isTransport ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-700'} px-2 py-0.5 rounded font-medium text-[11px] whitespace-nowrap">
+                ${x.category}
+              </span>
+            </td>
+            <td class="py-2.5 px-3">
+              <p class="font-medium text-slate-800">${x.desc}</p>
+              <span class="inline-flex items-center gap-1 text-[11px] font-semibold mt-0.5 ${isDirectFromTabung ? 'text-slate-500' : 'text-indigo-600'}">
+                <i class="fa-solid fa-user-check text-[10px]"></i> Dibayar oleh: ${payerName}
+              </span>
+            </td>
+            <td class="py-2.5 px-3 text-right font-extrabold text-rose-600 whitespace-nowrap">RM ${x.amount.toFixed(2)}</td>
+            <td class="py-2.5 px-3 text-center whitespace-nowrap space-x-2">
+              <button onclick="openEditExpenseModal(${x.id})" title="Kemaskini / Edit" class="text-blue-500 hover:text-blue-700 transition p-1">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button onclick="deleteExpense(${x.id})" title="Padam" class="text-slate-400 hover:text-rose-600 transition p-1">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          `;
+          expBody.appendChild(tr);
+        });
+      }
 
       // 3. Stat Cards
       const bakiBersih = totalActualInflow - totalExpense;
@@ -779,7 +923,7 @@
       document.getElementById('input-acc-number').value = bankInfo.accNumber;
 
       // QR Image
-      const savedQr = localStorage.getItem('usrah_qr_img_v3');
+      const savedQr = localStorage.getItem('usrah_qr_img_v4');
       if (savedQr) document.getElementById('qr-image').src = savedQr;
     }
 
@@ -794,7 +938,6 @@
       a.click();
     }
 
-    // Default Date Set
     window.onload = function() {
       const today = new Date().toISOString().slice(0, 10);
       const expDate = document.getElementById('exp-date');
