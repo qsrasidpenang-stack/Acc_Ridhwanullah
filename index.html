@@ -195,8 +195,12 @@
               </select>
             </div>
             <div>
-              <label class="block font-medium text-slate-600 mb-1">Butiran / Catatan</label>
-              <input type="text" id="exp-desc" placeholder="Cth: Air mineral, kuih usrah, cenderahati" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              <label class="block font-medium text-slate-600 mb-1">Butiran / Pembelian *</label>
+              <input type="text" id="exp-desc" placeholder="Cth: Air mineral & kuih usrah" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Catatan / Notes (Pilihan)</label>
+              <input type="text" id="exp-notes" placeholder="Cth: Resit simpan dlm fail / Belum claim / Kedai Pak Mat" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
             </div>
             <div>
               <label class="block font-medium text-slate-600 mb-1">Dibayar / Didahulukan Oleh</label>
@@ -267,6 +271,11 @@
               <select id="trip-payer" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none bg-white"></select>
             </div>
 
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Catatan / Notes Trip (Pilihan)</label>
+              <input type="text" id="trip-notes" placeholder="Cth: Bawa 4 orang ahli / Kereta Firzanah" class="w-full border border-slate-300 rounded-lg p-2 outline-none" />
+            </div>
+
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1.5 font-mono text-[11px]">
               <div class="flex justify-between">
                 <span class="text-slate-500">Minyak (<span id="calc-lbl-oil-km">130</span>km × RM0.125):</span>
@@ -301,14 +310,14 @@
 
         </div>
 
-        <!-- KANAN: JADUAL ALIRAN PERBELANJAAN (EDITABLE) -->
+        <!-- KANAN: JADUAL ALIRAN PERBELANJAAN (DENGAN LAJUR CATATAN) -->
         <div class="lg:col-span-7 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-slate-600"></i> Sejarah Transaksi Perbelanjaan
               </h3>
-              <p class="text-xs text-slate-500">Klik terus pada butang RM untuk edit amaun pantas.</p>
+              <p class="text-xs text-slate-500">Klik butang RM untuk kemaskini pantas amaun.</p>
             </div>
             <div class="flex items-center gap-2 self-start">
               <span id="badge-total-expenses" class="text-xs bg-rose-50 text-rose-600 px-3 py-1.5 rounded-full font-extrabold border border-rose-200">
@@ -327,7 +336,9 @@
                   <th class="py-2.5 px-3">Tarikh</th>
                   <th class="py-2.5 px-3">Kategori</th>
                   <th class="py-2.5 px-3">Butiran & Dibayar Oleh</th>
-                  <th class="py-2.5 px-3 text-right">Jumlah (RM) <span class="text-[10px] text-brand-600 lowercase font-normal">(klik utk edit)</span></th>
+                  <!-- LAJUR CATATAN / NOTES -->
+                  <th class="py-2.5 px-3">Catatan / Notes</th>
+                  <th class="py-2.5 px-3 text-right">Jumlah (RM)</th>
                   <th class="py-2.5 px-3 text-center">Tindakan</th>
                 </tr>
               </thead>
@@ -350,7 +361,6 @@
           <h2 class="text-lg font-bold text-slate-800">Imbas QR DuitNow</h2>
           <p class="text-xs text-slate-500 mb-5">Rujukan transaksi: <b class="text-brand-700">Infaq Usrah [Nama Anda]</b></p>
 
-          <!-- Paparan QR Awan -->
           <div class="bg-slate-50 border-2 border-dashed border-slate-200 p-4 rounded-2xl mx-auto inline-block max-w-[260px] relative group">
             <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=DuitNow-Kutipan-Usrah-Ridwanullah" alt="QR Bayaran" class="w-56 h-56 object-contain rounded-xl shadow-sm bg-white" />
             <label for="qr-upload" class="cursor-pointer text-[11px] text-brand-700 bg-white border border-slate-300 hover:bg-slate-100 px-3 py-1.5 rounded-full absolute bottom-2 left-1/2 -translate-x-1/2 shadow font-medium whitespace-nowrap">
@@ -407,7 +417,7 @@
 
   </main>
 
-  <!-- MODAL EDIT PERBELANJAAN (LENGKAP) -->
+  <!-- MODAL EDIT PERBELANJAAN (TERMASUK MEDAN CATATAN) -->
   <div id="modal-edit-expense" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-5 space-y-4 text-xs">
       <div class="flex justify-between items-center border-b border-slate-100 pb-2">
@@ -438,8 +448,12 @@
           </select>
         </div>
         <div>
-          <label class="block font-medium text-slate-600 mb-1">Butiran / Catatan</label>
+          <label class="block font-medium text-slate-600 mb-1">Butiran / Pembelian *</label>
           <input type="text" id="edit-exp-desc" required class="w-full border border-slate-300 rounded-lg p-2 outline-none font-medium" />
+        </div>
+        <div>
+          <label class="block font-medium text-slate-600 mb-1">Catatan / Notes (Pilihan)</label>
+          <input type="text" id="edit-exp-notes" placeholder="Cth: Resit simpan / Belum tuntut" class="w-full border border-slate-300 rounded-lg p-2 outline-none" />
         </div>
         <div>
           <label class="block font-medium text-slate-600 mb-1">Dibayar / Didahulukan Oleh</label>
@@ -473,9 +487,6 @@
 
   <!-- SCRIPT LOGIK & SAMBUNGAN FIREBASE -->
   <script>
-    // ==========================================
-    // ⚙️ KONFIGURASI FIREBASE PROJEK AccRA
-    // ==========================================
     const firebaseConfig = {
       apiKey: "AIzaSyDkHDesrq-l3BfyibVV2TtcyR8fmVPm38s",
       authDomain: "accra-e55cd.firebaseapp.com",
@@ -533,8 +544,6 @@
           const data = snapshot.val();
           if (data) {
             let rawMembers = data.members || INITIAL_MEMBERS;
-            
-            // AUTOMATIK BUANG NIKI DARI DATABASE AWAN JIKA MASIH WUJUD
             const hadNiki = rawMembers.some(m => m.name.trim().toLowerCase() === 'niki');
             members = rawMembers.filter(m => m.name.trim().toLowerCase() !== 'niki');
 
@@ -547,7 +556,7 @@
             }
 
             if (hadNiki) {
-              saveDataToCloud(); // Kemaskini terus ke Firebase supaya terpadam secara kekal di awan
+              saveDataToCloud();
             }
           } else {
             saveDataToCloud();
@@ -587,7 +596,7 @@
       }
     }
 
-    // SIMPAN DATA KE AWAN TERMASUK QR
+    // SIMPAN DATA KE AWAN TERMASUK CATATAN
     function saveDataToCloud() {
       const payload = { members, dates, bankInfo, expenses, qrImage: qrImageCloud };
       if (isFirebaseReady && dbRef) {
@@ -678,6 +687,7 @@
       const oilCost = totalKm * RATE_OIL;
       const mileageCost = totalKm * RATE_MILEAGE;
       const payer = document.getElementById('trip-payer').value;
+      const notes = (document.getElementById('trip-notes').value || '').trim();
 
       const rawFinal = document.getElementById('trip-final-amount').value;
       const finalAmount = rawFinal !== "" ? (parseFloat(rawFinal) || 0) : (oilCost + mileageCost + totalToll);
@@ -690,19 +700,22 @@
         category: "🚗 Pengangkutan / Kenderaan",
         desc: desc,
         payer: payer,
+        notes: notes,
         amount: finalAmount
       });
 
       saveDataToCloud();
       alert(`Tuntutan ${tripName} berjaya direkodkan ke awan!`);
+      document.getElementById('trip-notes').value = '';
     }
 
-    // TAMBAH BELANJA BIASA
+    // TAMBAH BELANJA BIASA (TERMASUK MEDAN CATATAN)
     function handleAddExpense(e) {
       e.preventDefault();
       const date = document.getElementById('exp-date').value;
       const category = document.getElementById('exp-category').value;
-      const desc = document.getElementById('exp-desc').value;
+      const desc = document.getElementById('exp-desc').value.trim();
+      const notes = (document.getElementById('exp-notes').value || '').trim();
       const payer = document.getElementById('exp-payer').value;
       
       const rawAmount = document.getElementById('exp-amount').value;
@@ -710,7 +723,7 @@
 
       if (!date || !desc) return;
 
-      expenses.unshift({ id: Date.now(), date, category, desc, payer, amount });
+      expenses.unshift({ id: Date.now(), date, category, desc, notes, payer, amount });
       saveDataToCloud();
       e.target.reset();
       document.getElementById('exp-date').value = new Date().toISOString().slice(0, 10);
@@ -733,7 +746,7 @@
       }
     }
 
-    // EDIT MODAL KAWALAN
+    // EDIT MODAL KAWALAN (DENGAN MEDAN CATATAN)
     function openEditExpenseModal(id) {
       const item = expenses.find(x => x.id === id);
       if (!item) return;
@@ -742,6 +755,7 @@
       document.getElementById('edit-exp-date').value = item.date;
       document.getElementById('edit-exp-category').value = item.category;
       document.getElementById('edit-exp-desc').value = item.desc;
+      document.getElementById('edit-exp-notes').value = item.notes || "";
       document.getElementById('edit-exp-payer').value = item.payer || "Tabung Usrah";
       document.getElementById('edit-exp-amount').value = item.amount || 0;
 
@@ -758,13 +772,14 @@
       const date = document.getElementById('edit-exp-date').value;
       const category = document.getElementById('edit-exp-category').value;
       const desc = document.getElementById('edit-exp-desc').value;
+      const notes = (document.getElementById('edit-exp-notes').value || '').trim();
       const payer = document.getElementById('edit-exp-payer').value;
       const rawAmount = document.getElementById('edit-exp-amount').value;
       const amount = rawAmount !== "" ? (parseFloat(rawAmount) || 0) : 0;
 
       const idx = expenses.findIndex(x => x.id === id);
       if (idx !== -1) {
-        expenses[idx] = { id, date, category, desc, payer, amount };
+        expenses[idx] = { id, date, category, desc, notes, payer, amount };
         saveDataToCloud();
         closeEditModal();
       }
@@ -828,7 +843,7 @@
       alert("Maklumat akaun bank disimpan ke awan!");
     }
 
-    // MUAT NAIK & SIMPAN QR SECARA KEKAL KE AWAN (FIREBASE)
+    // MUAT NAIK & SIMPAN QR KE AWAN
     function uploadQrCode(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -893,6 +908,11 @@
       if (expPayer) expPayer.innerHTML = `<option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>` + memberOptions;
       if (tripPayer) tripPayer.innerHTML = memberOptions + `<option value="Tabung Usrah">🏦 Tabung Usrah (Bendahari)</option>`;
       if (editExpPayer) editExpPayer.innerHTML = `<option value="Tabung Usrah">🏦 Tabung Usrah (Terus dari Bendahari)</option>` + memberOptions;
+    }
+
+    function escapeHtml(string) {
+      if(!string) return '';
+      return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     // RENDER SEMUA
@@ -986,7 +1006,7 @@
         summaryBody.appendChild(sTr);
       });
 
-      // 2. Jadual Perbelanjaan
+      // 2. Jadual Perbelanjaan (Dengan Lajur Catatan / Notes)
       const totalExpense = expenses.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
       document.getElementById('badge-total-expenses').innerText = `Total: RM ${totalExpense.toFixed(2)}`;
 
@@ -996,7 +1016,7 @@
       if (expenses.length === 0) {
         expBody.innerHTML = `
           <tr>
-            <td colspan="5" class="py-6 text-center text-slate-400 italic">
+            <td colspan="6" class="py-6 text-center text-slate-400 italic">
               Tiada rekod perbelanjaan lagi. Rekod di borang sebelah untuk memulakan.
             </td>
           </tr>
@@ -1007,6 +1027,7 @@
           const payerName = x.payer || "Tabung Usrah";
           const isDirectFromTabung = payerName.includes("Tabung Usrah");
           const amtVal = parseFloat(x.amount) || 0;
+          const noteText = x.notes ? escapeHtml(x.notes) : '<span class="text-slate-300 italic">—</span>';
 
           const tr = document.createElement('tr');
           tr.className = "hover:bg-slate-50 transition";
@@ -1018,10 +1039,14 @@
               </span>
             </td>
             <td class="py-2.5 px-3">
-              <p class="font-medium text-slate-800">${x.desc}</p>
+              <p class="font-medium text-slate-800">${escapeHtml(x.desc)}</p>
               <span class="inline-flex items-center gap-1 text-[11px] font-semibold mt-0.5 ${isDirectFromTabung ? 'text-slate-500' : 'text-indigo-600'}">
-                <i class="fa-solid fa-user-check text-[10px]"></i> Dibayar oleh: ${payerName}
+                <i class="fa-solid fa-user-check text-[10px]"></i> Dibayar oleh: ${escapeHtml(payerName)}
               </span>
+            </td>
+            <!-- PAPARAN CATATAN / NOTES -->
+            <td class="py-2.5 px-3 text-slate-600 text-xs max-w-[170px] truncate" title="${escapeHtml(x.notes || '')}">
+              ${noteText}
             </td>
             <td class="py-2.5 px-3 text-right whitespace-nowrap">
               <button onclick="quickEditExpenseAmount(${x.id})" title="Klik untuk edit nilai RM"
@@ -1062,7 +1087,6 @@
       document.getElementById('input-acc-holder').value = bankInfo.accHolder;
       document.getElementById('input-acc-number').value = bankInfo.accNumber;
 
-      // Papar gambar QR jika wujud dalam awan
       if (qrImageCloud) {
         document.getElementById('qr-image').src = qrImageCloud;
       }
