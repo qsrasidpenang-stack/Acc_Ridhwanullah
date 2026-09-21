@@ -59,6 +59,9 @@
       <button onclick="switchTab('belanja')" id="tab-btn-belanja" class="tab-btn px-4 py-2.5 font-medium border-b-2 border-transparent text-brand-100 hover:text-white flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-receipt"></i> Perbelanjaan & Kenderaan
       </button>
+      <button onclick="switchTab('kilat')" id="tab-btn-kilat" class="tab-btn px-4 py-2.5 font-medium border-b-2 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <i class="fa-solid fa-bolt text-amber-300"></i> Tabung Kilat (Kecemasan)
+      </button>
       <button onclick="switchTab('qr')" id="tab-btn-qr" class="tab-btn px-4 py-2.5 font-medium border-b-2 border-transparent text-brand-100 hover:text-white flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-qrcode"></i> QR & Maklumat Bank
       </button>
@@ -79,22 +82,22 @@
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Kutipan Masuk</span>
           <p id="stat-kutipan" class="text-2xl font-extrabold text-emerald-600 mt-1">RM 0.00</p>
-          <span class="text-[11px] text-slate-400">Termasuk infaq lebihan</span>
+          <span class="text-[11px] text-slate-400">Infaq sesi ahli</span>
         </div>
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Dibelanjakan</span>
           <p id="stat-belanja" class="text-2xl font-extrabold text-rose-600 mt-1">RM 0.00</p>
-          <span class="text-[11px] text-slate-400">Belanja & tuntutan semasa</span>
+          <span class="text-[11px] text-slate-400">Belanja & kenderaan usrah</span>
         </div>
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Baki Bersih Semasa</span>
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Baki Tabung Usrah</span>
           <p id="stat-baki" class="text-2xl font-extrabold text-blue-600 mt-1">RM 0.00</p>
-          <span class="text-[11px] text-slate-400">Dalam tabung bendahari</span>
+          <span class="text-[11px] text-slate-400">Baki bersih semasa</span>
         </div>
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Jumlah Tunggakan</span>
-          <p id="stat-tunggakan" class="text-2xl font-extrabold text-amber-600 mt-1">RM 0.00</p>
-          <span class="text-[11px] text-slate-400">Berasaskan min RM 2/sesi</span>
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Baki Tabung Kilat ⚡</span>
+          <p id="stat-baki-kilat" class="text-2xl font-extrabold text-amber-600 mt-1">RM 0.00</p>
+          <span class="text-[11px] text-slate-400">Dana sedia ada kecemasan</span>
         </div>
       </div>
 
@@ -155,10 +158,10 @@
       </div>
     </section>
 
-    <!-- 3. PERBELANJAAN & TUNTUTAN KENDERAAN TAB (2 HORIZONTAL COLUMNS + HISTORY) -->
+    <!-- 3. PERBELANJAAN & TUNTUTAN KENDERAAN TAB (2 HORIZONTAL COLUMNS + UNIFIED CLEAR TABLE) -->
     <section id="tab-belanja" class="tab-content hidden space-y-6">
 
-      <!-- 2 HORIZONTAL COLUMNS: PERBELANJAAN BIASA (KIRI) & KENDERAAN (KANAN) -->
+      <!-- 2 HORIZONTAL COLUMNS: BORANG PERBELANJAAN (KIRI) & BORANG KENDERAAN (KANAN) -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
         <!-- LAJUR 1: BORANG PERBELANJAAN BIASA -->
@@ -193,7 +196,7 @@
             </div>
             <div>
               <label class="block font-medium text-slate-600 mb-1">Catatan / Notes (Pilihan)</label>
-              <input type="text" id="exp-notes" placeholder="Cth: Resit simpan / Belum tuntut / Kedai Pak Mat" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              <input type="text" id="exp-notes" placeholder="Cth: Resit simpan dlm fail / Belum claim / Kedai Pak Mat" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
             </div>
             <div>
               <label class="block font-medium text-slate-600 mb-1">Dibayar / Didahulukan Oleh</label>
@@ -207,7 +210,7 @@
                 <span class="text-[10px] text-emerald-600 font-semibold italic">Pilihan (Boleh kosongkan)</span>
               </div>
               <input type="number" step="0.01" id="exp-amount" placeholder="0.00 (Biarkan kosong jika belum pasti)" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none font-bold" />
-              <p class="text-[10px] text-slate-400 mt-0.5">Jika kosong, ia disimpan sebagai RM 0.00 dan boleh dikemaskini kemudian.</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">Jika dibiarkan kosong, ia disimpan sebagai RM 0.00 dan boleh dikemaskini kemudian.</p>
             </div>
             <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-1.5">
               <i class="fa-solid fa-plus"></i> Simpan Belanja Biasa
@@ -227,7 +230,7 @@
 
           <div id="form-kenderaan-container" class="space-y-3 text-xs">
             <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-800 space-y-0.5">
-              <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-gas-pump"></i> Kadar Kiraan:</p>
+              <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-gas-pump"></i> Kadar Kiraan Automatik:</p>
               <div class="grid grid-cols-2 gap-1 text-[11px] mt-1">
                 <span>• Minyak: <b>RM 0.125 / km</b></span>
                 <span>• Mileage: <b>RM 0.05 / km</b></span>
@@ -256,7 +259,7 @@
             <div>
               <label class="block font-medium text-slate-600 mb-1">Jarak Sehala (KM)</label>
               <input type="number" id="trip-km-one-way" value="65" oninput="calculateTripCost()" step="0.1" class="w-full border border-slate-300 rounded-lg p-2 outline-none font-bold" />
-              <p class="text-[10px] text-slate-400 mt-0.5">Jumlah jarak keseluruhan: <span id="trip-total-km" class="font-bold text-slate-700">130</span> KM</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">Jumlah jarak: <span id="trip-total-km" class="font-bold text-slate-700">130</span> KM</p>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
@@ -315,14 +318,14 @@
 
       </div>
 
-      <!-- SEJARAH TRANSAKSI PERBELANJAAN (LEBAR PENUH DENGAN BUTANG STATUS SELESAI/DONE) -->
+      <!-- SEJARAH TRANSAKSI PERBELANJAAN (LAJUR DENGAN SEMUA PERKATAAN JELAS & PENUH) -->
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div>
             <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
               <i class="fa-solid fa-list-check text-brand-600"></i> Sejarah Transaksi Perbelanjaan
             </h3>
-            <p class="text-xs text-slate-500">Klik butang Status untuk tandakan transaksi <b>Selesai</b> atau <b>Belum Selesai</b>.</p>
+            <p class="text-xs text-slate-500">Semua perkataan dan catatan dipaparkan penuh tanpa terpotong.</p>
           </div>
           <div class="flex items-center gap-2 self-start flex-wrap">
             <span id="badge-status-count" class="text-xs bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full font-bold border border-slate-200">
@@ -341,13 +344,13 @@
           <table class="w-full text-xs text-left">
             <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase font-semibold">
               <tr>
-                <th class="py-2.5 px-3">Tarikh</th>
-                <th class="py-2.5 px-3">Kategori</th>
-                <th class="py-2.5 px-3">Butiran & Dibayar Oleh</th>
-                <th class="py-2.5 px-3">Catatan / Notes</th>
-                <th class="py-2.5 px-3 text-right">Jumlah (RM)</th>
-                <th class="py-2.5 px-3 text-center">Status Transaksi</th>
-                <th class="py-2.5 px-3 text-center">Tindakan</th>
+                <th class="py-3 px-3.5 whitespace-nowrap">Tarikh</th>
+                <th class="py-3 px-3 whitespace-nowrap">Kategori</th>
+                <!-- LAJUR DIGABUNG: BUTIRAN, PEMBAYAR & CATATAN DIPAPARKAN PENUH & JELAS -->
+                <th class="py-3 px-4 min-w-[280px]">Butiran Pembelian, Pembayar & Catatan Lengkap</th>
+                <th class="py-3 px-3 text-right whitespace-nowrap">Jumlah (RM)</th>
+                <th class="py-3 px-3 text-center whitespace-nowrap">Status</th>
+                <th class="py-3 px-3 text-center whitespace-nowrap">Tindakan</th>
               </tr>
             </thead>
             <tbody id="expense-tbody" class="divide-y divide-slate-100"></tbody>
@@ -357,7 +360,141 @@
 
     </section>
 
-    <!-- 4. QR CODE & MAKLUMAT BANK TAB -->
+    <!-- 4. TABUNG KILAT (KECEMASAN / HAL SEGERA) TAB -->
+    <section id="tab-kilat" class="tab-content hidden space-y-6">
+      
+      <!-- HEADER BANNER TABUNG KILAT -->
+      <div class="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white p-5 rounded-3xl shadow-sm space-y-2">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="bg-white/20 p-2 rounded-xl text-lg"><i class="fa-solid fa-bolt text-yellow-200"></i></span>
+              <h2 class="text-lg md:text-xl font-bold">Tabung Kilat Usrah (Kecemasan & Hal Segera)</h2>
+            </div>
+            <p class="text-xs text-amber-100 mt-1 max-w-2xl">
+              Saluran kutipan dan agihan pantas luar jangka seperti musibah, ahli sakit, kemalangan, khairat kematian, atau keperluan mendesak usrah.
+            </p>
+          </div>
+          <button onclick="blastWhatsAppKilatPrompt()" class="bg-white text-amber-800 hover:bg-amber-50 px-3.5 py-2 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5 self-start md:self-auto">
+            <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i> Blast Mesej Kilat ke Group
+          </button>
+        </div>
+      </div>
+
+      <!-- KAD STATISTIK TABUNG KILAT -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Sumbangan Masuk</span>
+          <p id="stat-kilat-masuk" class="text-2xl font-extrabold text-emerald-600 mt-1">RM 0.00</p>
+          <span class="text-[11px] text-slate-400">Infaq khas kecemasan diterima</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Telah Disalurkan</span>
+          <p id="stat-kilat-keluar" class="text-2xl font-extrabold text-rose-600 mt-1">RM 0.00</p>
+          <span class="text-[11px] text-slate-400">Bantuan telah diserahkan</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Baki Bersih Tabung Kilat</span>
+          <p id="stat-kilat-baki" class="text-2xl font-extrabold text-amber-600 mt-1">RM 0.00</p>
+          <span class="text-[11px] text-slate-400">Dana sedia ada untuk kecemasan</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- BORANG INPUT REKOD TABUNG KILAT -->
+        <div class="lg:col-span-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-hand-holding-medical text-amber-600"></i> Rekod Urusan Tabung Kilat
+            </h3>
+            <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold">Kecemasan</span>
+          </div>
+
+          <form id="form-tabung-kilat" onsubmit="handleAddKilat(event)" class="space-y-3 text-xs">
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Jenis Rekod *</label>
+              <select id="kilat-type" onchange="toggleKilatTypeLabel()" required class="w-full border border-slate-300 rounded-lg p-2 font-bold focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+                <option value="masuk">🟢 Sumbangan Masuk (Infaq Kilat Diterima)</option>
+                <option value="keluar">🔴 Penyaluran Keluar (Bantuan Diserahkan)</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block font-medium text-slate-600 mb-1">Tarikh *</label>
+                <input type="date" id="kilat-date" required class="w-full border border-slate-300 rounded-lg p-2 outline-none" />
+              </div>
+              <div>
+                <label class="block font-medium text-slate-600 mb-1">Jumlah (RM) *</label>
+                <input type="number" step="0.01" id="kilat-amount" placeholder="0.00" required class="w-full border border-slate-300 rounded-lg p-2 outline-none font-bold text-amber-700" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Tajuk / Perihal Kecemasan *</label>
+              <input type="text" id="kilat-title" placeholder="Cth: Bantuan Kecemasan Kemalangan Ahli / Sakit" required class="w-full border border-slate-300 rounded-lg p-2 outline-none font-medium" />
+            </div>
+
+            <div>
+              <label id="lbl-kilat-person" class="block font-medium text-slate-600 mb-1">Penyumbang / Hamba Allah *</label>
+              <input type="text" id="kilat-person" placeholder="Cth: Hamba Allah / Kak Nisa / Tabung Usrah" required class="w-full border border-slate-300 rounded-lg p-2 outline-none" />
+            </div>
+
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Catatan / Rujukan Resit (Pilihan)</label>
+              <textarea id="kilat-notes" rows="2" placeholder="Cth: Diserahkan tunai di hospital / Resit pemindahan DuitNow" class="w-full border border-slate-300 rounded-lg p-2 outline-none"></textarea>
+            </div>
+
+            <div class="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl">
+              <input type="checkbox" id="kilat-is-done" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-amber-500 cursor-pointer" />
+              <label for="kilat-is-done" class="text-xs font-semibold text-slate-700 cursor-pointer">
+                Tandakan transaksi ini telah selesai (Confirmed / Disahkan)
+              </label>
+            </div>
+
+            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-save"></i> Simpan Rekod Tabung Kilat
+            </button>
+          </form>
+        </div>
+
+        <!-- JADUAL REKOD TABUNG KILAT (PENUH & JELAS) -->
+        <div class="lg:col-span-7 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-amber-600"></i> Sejarah Aliran Tabung Kilat
+              </h3>
+              <p class="text-xs text-slate-500">Rekod kutipan segera dan pengagihan bantuan.</p>
+            </div>
+            <button onclick="clearAllKilatPrompt()" class="text-xs text-slate-400 hover:text-rose-600 px-2.5 py-1 transition border border-slate-200 rounded-lg self-start">
+              <i class="fa-solid fa-trash-can"></i> Kosongkan
+            </button>
+          </div>
+
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase font-semibold">
+                <tr>
+                  <th class="py-2.5 px-3 whitespace-nowrap">Tarikh</th>
+                  <th class="py-2.5 px-2 text-center whitespace-nowrap">Jenis</th>
+                  <th class="py-2.5 px-3 min-w-[220px]">Perihal Kecemasan, Individu & Catatan</th>
+                  <th class="py-2.5 px-3 text-right whitespace-nowrap">Jumlah (RM)</th>
+                  <th class="py-2.5 px-3 text-center whitespace-nowrap">Status</th>
+                  <th class="py-2.5 px-2 text-center whitespace-nowrap">Padam</th>
+                </tr>
+              </thead>
+              <tbody id="kilat-tbody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 5. QR CODE & MAKLUMAT BANK TAB -->
     <section id="tab-qr" class="tab-content hidden space-y-6">
       <div class="max-w-xl mx-auto space-y-6">
         
@@ -541,6 +678,7 @@
     let dates = INITIAL_DATES;
     let bankInfo = INITIAL_BANK;
     let expenses = [];
+    let tabungKilat = []; // ARRAY DATA TABUNG KILAT
     let qrImageCloud = "";
     let dbRef = null;
     let isFirebaseReady = false;
@@ -564,6 +702,7 @@
             dates = data.dates || INITIAL_DATES;
             bankInfo = data.bankInfo || INITIAL_BANK;
             expenses = data.expenses || [];
+            tabungKilat = data.tabungKilat || [];
             if (data.qrImage) {
               qrImageCloud = data.qrImage;
               document.getElementById('qr-image').src = qrImageCloud;
@@ -590,6 +729,7 @@
         dates = JSON.parse(localStorage.getItem('usrah_dates_v5')) || INITIAL_DATES;
         bankInfo = JSON.parse(localStorage.getItem('usrah_bank_v5')) || INITIAL_BANK;
         expenses = JSON.parse(localStorage.getItem('usrah_exp_v5')) || [];
+        tabungKilat = JSON.parse(localStorage.getItem('usrah_kilat_v5')) || [];
         qrImageCloud = localStorage.getItem('usrah_qr_img_v5') || "";
         renderAll();
       }
@@ -612,7 +752,7 @@
 
     // SIMPAN DATA KE AWAN
     function saveDataToCloud() {
-      const payload = { members, dates, bankInfo, expenses, qrImage: qrImageCloud };
+      const payload = { members, dates, bankInfo, expenses, tabungKilat, qrImage: qrImageCloud };
       if (isFirebaseReady && dbRef) {
         dbRef.set(payload);
       } else {
@@ -620,6 +760,7 @@
         localStorage.setItem('usrah_dates_v5', JSON.stringify(dates));
         localStorage.setItem('usrah_bank_v5', JSON.stringify(bankInfo));
         localStorage.setItem('usrah_exp_v5', JSON.stringify(expenses));
+        localStorage.setItem('usrah_kilat_v5', JSON.stringify(tabungKilat));
         if (qrImageCloud) localStorage.setItem('usrah_qr_img_v5', qrImageCloud);
         renderAll();
       }
@@ -742,7 +883,7 @@
       }
     }
 
-    // QUICK-EDIT AMAUN DARI JADUAL
+    // QUICK-EDIT AMAUN BELANJA
     function quickEditExpenseAmount(id) {
       const item = expenses.find(x => x.id === id);
       if (!item) return;
@@ -759,7 +900,7 @@
       }
     }
 
-    // EDIT MODAL KAWALAN
+    // EDIT MODAL BELANJA
     function openEditExpenseModal(id) {
       const item = expenses.find(x => x.id === id);
       if (!item) return;
@@ -812,6 +953,96 @@
         expenses = [];
         saveDataToCloud();
       }
+    }
+
+    // ==========================================
+    // LOGIK TABUNG KILAT (KECEMASAN / HAL SEGERA)
+    // ==========================================
+    function toggleKilatTypeLabel() {
+      const type = document.getElementById('kilat-type').value;
+      const lbl = document.getElementById('lbl-kilat-person');
+      const input = document.getElementById('kilat-person');
+      if (type === 'masuk') {
+        lbl.innerText = "Penyumbang / Hamba Allah *";
+        input.placeholder = "Cth: Hamba Allah / Kak Nisa / Farah";
+      } else {
+        lbl.innerText = "Penerima Bantuan / Diserahkan Kepada *";
+        input.placeholder = "Cth: Ahli Usrah X / Hospital / Tabung Kecemasan";
+      }
+    }
+
+    function handleAddKilat(e) {
+      e.preventDefault();
+      const type = document.getElementById('kilat-type').value;
+      const date = document.getElementById('kilat-date').value;
+      const amount = parseFloat(document.getElementById('kilat-amount').value) || 0;
+      const title = document.getElementById('kilat-title').value.trim();
+      const person = document.getElementById('kilat-person').value.trim();
+      const notes = document.getElementById('kilat-notes').value.trim();
+      const isDone = document.getElementById('kilat-is-done').checked;
+
+      if (!title || !person || amount <= 0) {
+        alert("Sila masukkan maklumat tajuk, penama dan amaun yang sah.");
+        return;
+      }
+
+      tabungKilat.unshift({
+        id: Date.now(),
+        type,
+        date,
+        amount,
+        title,
+        person,
+        notes,
+        isDone
+      });
+
+      saveDataToCloud();
+      e.target.reset();
+      document.getElementById('kilat-date').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('kilat-is-done').checked = true;
+      toggleKilatTypeLabel();
+      alert("✅ Rekod Tabung Kilat berjaya disimpan!");
+    }
+
+    function toggleKilatStatus(id) {
+      const item = tabungKilat.find(x => x.id === id);
+      if (item) {
+        item.isDone = !item.isDone;
+        saveDataToCloud();
+      }
+    }
+
+    function deleteKilat(id) {
+      if (confirm("Padam transaksi tabung kilat ini?")) {
+        tabungKilat = tabungKilat.filter(x => x.id !== id);
+        saveDataToCloud();
+      }
+    }
+
+    function clearAllKilatPrompt() {
+      if (confirm("Kosongkan semua rekod Tabung Kilat?")) {
+        tabungKilat = [];
+        saveDataToCloud();
+      }
+    }
+
+    function blastWhatsAppKilatPrompt() {
+      const tujuan = prompt("Masukkan tujuan Tabung Kilat:", "Bantuan Kecemasan & Sumbangan Kilat Usrah");
+      if (!tujuan) return;
+
+      const msg = `🚨 *HEBAHAN TABUNG KILAT USRAH RIDWANULLAH* 🚨\n\n` +
+        `Assalamu'alaikum wa rahmatullah w.b.t,\n\n` +
+        `Satu kutipan kilat kecemasan dibuka khas bagi tujuan:\n` +
+        `👉 *${tujuan.trim()}*\n\n` +
+        `Bagi sahabat-sahabat yang berkelapangan untuk menyumbang, infaq boleh disalurkan terus ke:\n` +
+        `🏦 *Bank:* ${bankInfo.bankName}\n` +
+        `👤 *Nama:* ${bankInfo.accHolder}\n` +
+        `💳 *No. Akaun:* ${bankInfo.accNumber}\n` +
+        `📌 *Rujukan:* Kilat [Nama Anda]\n\n` +
+        `Semoga sumbangan kalian menjadi asbab keluasan rezeki dan dipermudahkan segala urusan. Jazakumullahu khairal jaza'! 🤲✨`;
+
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     // EDIT INFAQ MATRIX
@@ -930,7 +1161,7 @@
       return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    // RENDER SEMUA
+    // RENDER SEMUA PAPARAN
     function renderAll() {
       let totalActualInflow = 0;
       let totalDueAll = 0;
@@ -1021,7 +1252,7 @@
         summaryBody.appendChild(sTr);
       });
 
-      // 2. Jadual Perbelanjaan & Status Selesai
+      // 2. Jadual Perbelanjaan (Lajur Digabung & Teks Jelas Penuh)
       const totalExpense = expenses.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
       const completedCount = expenses.filter(x => !!x.isDone).length;
       
@@ -1034,7 +1265,7 @@
       if (expenses.length === 0) {
         expBody.innerHTML = `
           <tr>
-            <td colspan="7" class="py-6 text-center text-slate-400 italic">
+            <td colspan="6" class="py-6 text-center text-slate-400 italic">
               Tiada rekod perbelanjaan lagi. Sila rekod pada salah satu borang di atas.
             </td>
           </tr>
@@ -1045,28 +1276,38 @@
           const payerName = x.payer || "Tabung Usrah";
           const isDirectFromTabung = payerName.includes("Tabung Usrah");
           const amtVal = parseFloat(x.amount) || 0;
-          const noteText = x.notes ? escapeHtml(x.notes) : '<span class="text-slate-300 italic">—</span>';
           const isDone = !!x.isDone;
 
           const tr = document.createElement('tr');
           tr.className = isDone ? "hover:bg-slate-50 transition bg-emerald-50/20" : "hover:bg-slate-50 transition";
           tr.innerHTML = `
-            <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">${x.date}</td>
-            <td class="py-2.5 px-3">
-              <span class="${isTransport ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-700'} px-2 py-0.5 rounded font-medium text-[11px] whitespace-nowrap">
+            <td class="py-3 px-3.5 text-slate-500 whitespace-nowrap align-top">${x.date}</td>
+            <td class="py-3 px-3 align-top whitespace-nowrap">
+              <span class="${isTransport ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-700'} px-2.5 py-0.5 rounded font-medium text-[11px] inline-block">
                 ${x.category}
               </span>
             </td>
-            <td class="py-2.5 px-3">
-              <p class="font-medium text-slate-800 ${isDone ? 'line-through text-slate-500' : ''}">${escapeHtml(x.desc)}</p>
-              <span class="inline-flex items-center gap-1 text-[11px] font-semibold mt-0.5 ${isDirectFromTabung ? 'text-slate-500' : 'text-indigo-600'}">
-                <i class="fa-solid fa-user-check text-[10px]"></i> Dibayar oleh: ${escapeHtml(payerName)}
-              </span>
+            <!-- GABUNGAN SEMUA PERKATAAN: BUTIRAN + PEMBAYAR + CATATAN SECARA PENUH -->
+            <td class="py-3 px-4 align-top">
+              <div class="font-bold text-slate-800 text-xs md:text-sm leading-snug ${isDone ? 'line-through text-slate-400' : ''}">
+                ${escapeHtml(x.desc)}
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                <span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md border ${
+                  isDirectFromTabung 
+                    ? 'text-slate-600 bg-slate-100 border-slate-200' 
+                    : 'text-indigo-700 bg-indigo-50 border-indigo-200'
+                }">
+                  <i class="fa-solid fa-user-check text-[10px]"></i> Dibayar oleh: ${escapeHtml(payerName)}
+                </span>
+                ${x.notes ? `
+                  <span class="inline-flex items-center gap-1 text-[11px] font-medium text-amber-900 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
+                    <i class="fa-solid fa-note-sticky text-amber-600"></i> ${escapeHtml(x.notes)}
+                  </span>
+                ` : ''}
+              </div>
             </td>
-            <td class="py-2.5 px-3 text-slate-600 text-xs max-w-[170px] truncate" title="${escapeHtml(x.notes || '')}">
-              ${noteText}
-            </td>
-            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+            <td class="py-3 px-3 text-right whitespace-nowrap align-top">
               <button onclick="quickEditExpenseAmount(${x.id})" title="Klik untuk edit nilai RM"
                 class="px-2.5 py-1 rounded-lg text-xs font-extrabold transition border ${
                   amtVal > 0 
@@ -1077,19 +1318,19 @@
               </button>
             </td>
             <!-- BUTANG STATUS SELESAI / DONE -->
-            <td class="py-2.5 px-3 text-center whitespace-nowrap">
+            <td class="py-3 px-3 text-center whitespace-nowrap align-top">
               <button onclick="toggleExpenseStatus(${x.id})" 
-                title="${isDone ? 'Klik untuk tanda Belum Selesai' : 'Klik untuk tandakan Selesai / Paid'}"
+                title="${isDone ? 'Klik untuk tukar ke Belum Selesai' : 'Klik untuk tandakan Selesai / Paid'}"
                 class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition shadow-xs ${
                   isDone 
                     ? 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300' 
                     : 'bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300'
                 }">
                 <i class="fa-solid ${isDone ? 'fa-circle-check text-emerald-600' : 'fa-clock text-amber-500'}"></i>
-                <span>${isDone ? 'Selesai' : 'Belum Selesai'}</span>
+                <span>${isDone ? 'Selesai' : 'Belum'}</span>
               </button>
             </td>
-            <td class="py-2.5 px-3 text-center whitespace-nowrap space-x-2">
+            <td class="py-3 px-3 text-center whitespace-nowrap space-x-1.5 align-top">
               <button onclick="openEditExpenseModal(${x.id})" title="Kemaskini Penuh" class="text-blue-500 hover:text-blue-700 transition p-1">
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>
@@ -1102,14 +1343,83 @@
         });
       }
 
-      // 3. Stat Cards
+      // 3. Render Tabung Kilat (Kecemasan)
+      let kilatMasuk = 0;
+      let kilatKeluar = 0;
+      const kilatBody = document.getElementById('kilat-tbody');
+      kilatBody.innerHTML = '';
+
+      if (tabungKilat.length === 0) {
+        kilatBody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-6 text-center text-slate-400 italic">
+              Tiada rekod urusan Tabung Kilat. Masukkan rekod di borang sebelah.
+            </td>
+          </tr>
+        `;
+      } else {
+        tabungKilat.forEach(k => {
+          const amt = parseFloat(k.amount) || 0;
+          const isMasuk = k.type === 'masuk';
+          if (isMasuk) kilatMasuk += amt;
+          else kilatKeluar += amt;
+
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50 transition";
+          tr.innerHTML = `
+            <td class="py-3 px-3 text-slate-500 whitespace-nowrap align-top">${k.date}</td>
+            <td class="py-3 px-2 text-center align-top whitespace-nowrap">
+              <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                isMasuk ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+              }">
+                ${isMasuk ? '🟢 Masuk' : '🔴 Agihan'}
+              </span>
+            </td>
+            <td class="py-3 px-3 align-top">
+              <p class="font-bold text-slate-800 text-xs">${escapeHtml(k.title)}</p>
+              <div class="flex flex-wrap gap-1.5 mt-1 text-[11px]">
+                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200">
+                  <i class="fa-solid fa-user text-[10px]"></i> ${escapeHtml(k.person)}
+                </span>
+                ${k.notes ? `<span class="bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200"><i class="fa-solid fa-note-sticky text-[10px]"></i> ${escapeHtml(k.notes)}</span>` : ''}
+              </div>
+            </td>
+            <td class="py-3 px-3 text-right font-extrabold whitespace-nowrap align-top ${isMasuk ? 'text-emerald-600' : 'text-rose-600'}">
+              ${isMasuk ? '+' : '-'} RM ${amt.toFixed(2)}
+            </td>
+            <td class="py-3 px-3 text-center whitespace-nowrap align-top">
+              <button onclick="toggleKilatStatus(${k.id})" class="text-[10px] font-bold px-2 py-0.5 rounded-full border transition ${
+                k.isDone 
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300' 
+                  : 'bg-amber-50 text-amber-700 border-amber-300'
+              }">
+                ${k.isDone ? '✓ Selesai' : '⏳ Proses'}
+              </button>
+            </td>
+            <td class="py-3 px-2 text-center whitespace-nowrap align-top">
+              <button onclick="deleteKilat(${k.id})" class="text-slate-400 hover:text-rose-600 p-1">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          `;
+          kilatBody.appendChild(tr);
+        });
+      }
+
+      const kilatBaki = kilatMasuk - kilatKeluar;
+      document.getElementById('stat-kilat-masuk').innerText = `RM ${kilatMasuk.toFixed(2)}`;
+      document.getElementById('stat-kilat-keluar').innerText = `RM ${kilatKeluar.toFixed(2)}`;
+      document.getElementById('stat-kilat-baki').innerText = `RM ${kilatBaki.toFixed(2)}`;
+      document.getElementById('stat-baki-kilat').innerText = `RM ${kilatBaki.toFixed(2)}`;
+
+      // 4. Stat Cards Dashboard Utama
       const bakiBersih = totalActualInflow - totalExpense;
       document.getElementById('stat-kutipan').innerText = `RM ${totalActualInflow.toFixed(2)}`;
       document.getElementById('stat-belanja').innerText = `RM ${totalExpense.toFixed(2)}`;
       document.getElementById('stat-baki').innerText = `RM ${bakiBersih.toFixed(2)}`;
       document.getElementById('stat-tunggakan').innerText = `RM ${totalDueAll.toFixed(2)}`;
 
-      // 4. Update Bank Info
+      // 5. Update Maklumat Bank
       document.getElementById('disp-bank-name').innerText = bankInfo.bankName;
       document.getElementById('disp-acc-holder').innerText = bankInfo.accHolder;
       document.getElementById('disp-acc-number').innerText = bankInfo.accNumber;
@@ -1123,9 +1433,9 @@
       }
     }
 
-    // BACKUP LOCAL JSON
+    // BACKUP LOCAL JSON (TERMASUK TABUNG KILAT)
     function exportData() {
-      const data = { members, dates, expenses, bankInfo, qrImage: qrImageCloud };
+      const data = { members, dates, expenses, tabungKilat, bankInfo, qrImage: qrImageCloud };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -1138,8 +1448,10 @@
       const today = new Date().toISOString().slice(0, 10);
       const expDate = document.getElementById('exp-date');
       const tripDate = document.getElementById('trip-date');
+      const kilatDate = document.getElementById('kilat-date');
       if (expDate) expDate.value = today;
       if (tripDate) tripDate.value = today;
+      if (kilatDate) kilatDate.value = today;
       calculateTripCost();
     };
   </script>
