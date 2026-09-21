@@ -155,29 +155,22 @@
       </div>
     </section>
 
-    <!-- 3. PERBELANJAAN & TUNTUTAN KENDERAAN TAB -->
+    <!-- 3. PERBELANJAAN & TUNTUTAN KENDERAAN TAB (2 HORIZONTAL COLUMNS + HISTORY) -->
     <section id="tab-belanja" class="tab-content hidden space-y-6">
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- 2 HORIZONTAL COLUMNS: PERBELANJAAN BIASA (KIRI) & KENDERAAN (KANAN) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
-        <!-- KIRI: BORANG INPUT (Biasa vs Kenderaan) -->
-        <div class="lg:col-span-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-          
-          <div class="flex border-b border-slate-200 pb-2 justify-between items-center">
+        <!-- LAJUR 1: BORANG PERBELANJAAN BIASA -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-              <i class="fa-solid fa-file-invoice-dollar text-rose-500"></i> Rekod Wang Keluar
+              <span class="p-1.5 bg-rose-100 text-rose-600 rounded-lg"><i class="fa-solid fa-receipt"></i></span>
+              1. Rekod Perbelanjaan Biasa
             </h3>
-            <div class="flex bg-slate-100 p-1 rounded-xl text-xs">
-              <button type="button" onclick="toggleExpenseForm('biasa')" id="btn-sub-biasa" class="px-2.5 py-1 rounded-lg font-bold bg-white text-slate-800 shadow-sm transition">
-                Biasa
-              </button>
-              <button type="button" onclick="toggleExpenseForm('kenderaan')" id="btn-sub-kenderaan" class="px-2.5 py-1 rounded-lg font-medium text-slate-500 hover:text-slate-800 transition">
-                🚗 Kenderaan / Trip
-              </button>
-            </div>
+            <span class="text-[11px] text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full font-medium">Jamuan / Modul / Cenderahati</span>
           </div>
 
-          <!-- SUB-FORM 1: BELANJA BIASA -->
           <form id="form-add-expense" onsubmit="handleAddExpense(event)" class="space-y-3 text-xs">
             <div>
               <label class="block font-medium text-slate-600 mb-1">Tarikh Belanja</label>
@@ -200,7 +193,7 @@
             </div>
             <div>
               <label class="block font-medium text-slate-600 mb-1">Catatan / Notes (Pilihan)</label>
-              <input type="text" id="exp-notes" placeholder="Cth: Resit simpan dlm fail / Belum claim / Kedai Pak Mat" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              <input type="text" id="exp-notes" placeholder="Cth: Resit simpan / Belum tuntut / Kedai Pak Mat" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
             </div>
             <div>
               <label class="block font-medium text-slate-600 mb-1">Dibayar / Didahulukan Oleh</label>
@@ -211,23 +204,34 @@
             <div>
               <div class="flex justify-between items-center mb-1">
                 <label class="block font-medium text-slate-600">Jumlah Nilai Belanja (RM)</label>
-                <span class="text-[10px] text-emerald-600 font-semibold italic">Pilihan (Tidak wajib)</span>
+                <span class="text-[10px] text-emerald-600 font-semibold italic">Pilihan (Boleh kosongkan)</span>
               </div>
-              <input type="number" step="0.01" id="exp-amount" placeholder="0.00 (Boleh biar kosong jika belum pasti)" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none font-bold" />
-              <p class="text-[10px] text-slate-400 mt-0.5">Jika kosong, ia disimpan sebagai RM 0.00 dan boleh diisi kemudian.</p>
+              <input type="number" step="0.01" id="exp-amount" placeholder="0.00 (Biarkan kosong jika belum pasti)" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none font-bold" />
+              <p class="text-[10px] text-slate-400 mt-0.5">Jika kosong, ia disimpan sebagai RM 0.00 dan boleh dikemaskini kemudian.</p>
             </div>
-            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl shadow transition">
-              Simpan Belanja Biasa
+            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Simpan Belanja Biasa
             </button>
           </form>
+        </div>
 
-          <!-- SUB-FORM 2: KALKULATOR TUNTUTAN KENDERAAN -->
-          <div id="form-kenderaan-container" class="hidden space-y-3 text-xs">
+        <!-- LAJUR 2: KALKULATOR TUNTUTAN KENDERAAN / TRIP -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <span class="p-1.5 bg-amber-100 text-amber-600 rounded-lg"><i class="fa-solid fa-car-side"></i></span>
+              2. Tuntutan Pengangkutan & Trip
+            </h3>
+            <span class="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full font-medium">Kira Minyak & Tol</span>
+          </div>
+
+          <div id="form-kenderaan-container" class="space-y-3 text-xs">
             <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-800 space-y-0.5">
-              <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-gas-pump"></i> Formula Kadar Tuntutan:</p>
-              <p>• Minyak: <b>RM 0.125 / km</b></p>
-              <p>• Mileage (Haus-lusuh): <b>RM 0.05 / km</b></p>
-              <p>• Tol: Mengikut anggaran / resit pergi-balik</p>
+              <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-gas-pump"></i> Kadar Kiraan:</p>
+              <div class="grid grid-cols-2 gap-1 text-[11px] mt-1">
+                <span>• Minyak: <b>RM 0.125 / km</b></span>
+                <span>• Mileage: <b>RM 0.05 / km</b></span>
+              </div>
             </div>
 
             <div>
@@ -252,7 +256,7 @@
             <div>
               <label class="block font-medium text-slate-600 mb-1">Jarak Sehala (KM)</label>
               <input type="number" id="trip-km-one-way" value="65" oninput="calculateTripCost()" step="0.1" class="w-full border border-slate-300 rounded-lg p-2 outline-none font-bold" />
-              <p class="text-[10px] text-slate-400 mt-0.5">Jumlah jarak: <span id="trip-total-km" class="font-bold text-slate-700">130</span> KM</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">Jumlah jarak keseluruhan: <span id="trip-total-km" class="font-bold text-slate-700">130</span> KM</p>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
@@ -276,7 +280,7 @@
               <input type="text" id="trip-notes" placeholder="Cth: Bawa 4 orang ahli / Kereta Firzanah" class="w-full border border-slate-300 rounded-lg p-2 outline-none" />
             </div>
 
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1.5 font-mono text-[11px]">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1 font-mono text-[11px]">
               <div class="flex justify-between">
                 <span class="text-slate-500">Minyak (<span id="calc-lbl-oil-km">130</span>km × RM0.125):</span>
                 <span class="font-bold text-slate-700">RM <span id="calc-oil">16.25</span></span>
@@ -287,18 +291,18 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-slate-500">Jumlah Tol:</span>
-                <span class="font-bold text-slate-700">RM <span id="calc-toll">10.00</span></span>
+                <span class="font-bold text-slate-700">RM <span id="calc-toll">8.00</span></span>
               </div>
               <div class="border-t border-slate-200 pt-1 flex justify-between text-xs text-brand-800 font-bold">
                 <span>Jumlah Auto-Kira:</span>
-                <span>RM <span id="calc-auto-total">32.75</span></span>
+                <span>RM <span id="calc-auto-total">30.75</span></span>
               </div>
             </div>
 
             <div>
               <div class="flex justify-between items-center mb-1">
                 <label class="font-bold text-slate-700">Tuntutan Akhir Diluluskan (RM)</label>
-                <span class="text-[10px] text-emerald-600 font-semibold italic">Boleh laras / Kosongkan jika belum pasti</span>
+                <span class="text-[10px] text-emerald-600 font-semibold italic">Boleh laras secara manual</span>
               </div>
               <input type="number" step="0.05" id="trip-final-amount" value="35.00" class="w-full border-2 border-emerald-500 bg-emerald-50/40 rounded-lg p-2.5 text-base font-extrabold text-emerald-800 outline-none" />
             </div>
@@ -307,47 +311,50 @@
               <i class="fa-solid fa-car"></i> Rekod Masuk ke Perbelanjaan
             </button>
           </div>
-
-        </div>
-
-        <!-- KANAN: JADUAL ALIRAN PERBELANJAAN (DENGAN LAJUR CATATAN) -->
-        <div class="lg:col-span-7 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                <i class="fa-solid fa-list-check text-slate-600"></i> Sejarah Transaksi Perbelanjaan
-              </h3>
-              <p class="text-xs text-slate-500">Klik butang RM untuk kemaskini pantas amaun.</p>
-            </div>
-            <div class="flex items-center gap-2 self-start">
-              <span id="badge-total-expenses" class="text-xs bg-rose-50 text-rose-600 px-3 py-1.5 rounded-full font-extrabold border border-rose-200">
-                Total: RM 0.00
-              </span>
-              <button onclick="clearAllExpensesPrompt()" title="Kosongkan senarai belanja" class="text-xs text-slate-400 hover:text-rose-600 px-2 py-1 transition border border-slate-200 rounded-lg">
-                <i class="fa-solid fa-trash-arrow-up"></i> Kosongkan
-              </button>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto border border-slate-200 rounded-xl">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase font-semibold">
-                <tr>
-                  <th class="py-2.5 px-3">Tarikh</th>
-                  <th class="py-2.5 px-3">Kategori</th>
-                  <th class="py-2.5 px-3">Butiran & Dibayar Oleh</th>
-                  <!-- LAJUR CATATAN / NOTES -->
-                  <th class="py-2.5 px-3">Catatan / Notes</th>
-                  <th class="py-2.5 px-3 text-right">Jumlah (RM)</th>
-                  <th class="py-2.5 px-3 text-center">Tindakan</th>
-                </tr>
-              </thead>
-              <tbody id="expense-tbody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
         </div>
 
       </div>
+
+      <!-- SEJARAH TRANSAKSI PERBELANJAAN (LEBAR PENUH DENGAN BUTANG STATUS SELESAI/DONE) -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand-600"></i> Sejarah Transaksi Perbelanjaan
+            </h3>
+            <p class="text-xs text-slate-500">Klik butang Status untuk tandakan transaksi <b>Selesai</b> atau <b>Belum Selesai</b>.</p>
+          </div>
+          <div class="flex items-center gap-2 self-start flex-wrap">
+            <span id="badge-status-count" class="text-xs bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full font-bold border border-slate-200">
+              Selesai: 0 / 0
+            </span>
+            <span id="badge-total-expenses" class="text-xs bg-rose-50 text-rose-600 px-3 py-1.5 rounded-full font-extrabold border border-rose-200">
+              Total: RM 0.00
+            </span>
+            <button onclick="clearAllExpensesPrompt()" title="Kosongkan senarai belanja" class="text-xs text-slate-400 hover:text-rose-600 px-2.5 py-1.5 transition border border-slate-200 rounded-lg">
+              <i class="fa-solid fa-trash-can"></i> Kosongkan
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase font-semibold">
+              <tr>
+                <th class="py-2.5 px-3">Tarikh</th>
+                <th class="py-2.5 px-3">Kategori</th>
+                <th class="py-2.5 px-3">Butiran & Dibayar Oleh</th>
+                <th class="py-2.5 px-3">Catatan / Notes</th>
+                <th class="py-2.5 px-3 text-right">Jumlah (RM)</th>
+                <th class="py-2.5 px-3 text-center">Status Transaksi</th>
+                <th class="py-2.5 px-3 text-center">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="expense-tbody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+
     </section>
 
     <!-- 4. QR CODE & MAKLUMAT BANK TAB -->
@@ -417,7 +424,7 @@
 
   </main>
 
-  <!-- MODAL EDIT PERBELANJAAN (TERMASUK MEDAN CATATAN) -->
+  <!-- MODAL EDIT PERBELANJAAN -->
   <div id="modal-edit-expense" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-5 space-y-4 text-xs">
       <div class="flex justify-between items-center border-b border-slate-100 pb-2">
@@ -467,6 +474,13 @@
             <span class="text-[10px] text-emerald-600 font-semibold italic">Tidak wajib</span>
           </div>
           <input type="number" step="0.01" id="edit-exp-amount" placeholder="0.00" class="w-full border border-slate-300 rounded-lg p-2 outline-none font-bold text-rose-600" />
+        </div>
+
+        <div class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+          <input type="checkbox" id="edit-exp-done" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-brand-500 cursor-pointer" />
+          <label for="edit-exp-done" class="text-xs font-semibold text-slate-700 cursor-pointer">
+            Tandakan Selesai (Transaksi Selesai / Telah Dibayar)
+          </label>
         </div>
 
         <div class="flex gap-2 pt-2">
@@ -596,7 +610,7 @@
       }
     }
 
-    // SIMPAN DATA KE AWAN TERMASUK CATATAN
+    // SIMPAN DATA KE AWAN
     function saveDataToCloud() {
       const payload = { members, dates, bankInfo, expenses, qrImage: qrImageCloud };
       if (isFirebaseReady && dbRef) {
@@ -625,27 +639,6 @@
       if (selectedBtn) {
         selectedBtn.classList.add('border-white', 'text-white');
         selectedBtn.classList.remove('border-transparent', 'text-brand-100');
-      }
-    }
-
-    // TOGGLE EXPENSE FORM (BIASA VS KENDERAAN)
-    function toggleExpenseForm(type) {
-      const btnBiasa = document.getElementById('btn-sub-biasa');
-      const btnKenderaan = document.getElementById('btn-sub-kenderaan');
-      const formBiasa = document.getElementById('form-add-expense');
-      const formKenderaan = document.getElementById('form-kenderaan-container');
-
-      if (type === 'biasa') {
-        btnBiasa.className = "px-2.5 py-1 rounded-lg font-bold bg-white text-slate-800 shadow-sm transition";
-        btnKenderaan.className = "px-2.5 py-1 rounded-lg font-medium text-slate-500 hover:text-slate-800 transition";
-        formBiasa.classList.remove('hidden');
-        formKenderaan.classList.add('hidden');
-      } else {
-        btnKenderaan.className = "px-2.5 py-1 rounded-lg font-bold bg-white text-slate-800 shadow-sm transition";
-        btnBiasa.className = "px-2.5 py-1 rounded-lg font-medium text-slate-500 hover:text-slate-800 transition";
-        formKenderaan.classList.remove('hidden');
-        formBiasa.classList.add('hidden');
-        calculateTripCost();
       }
     }
 
@@ -701,7 +694,8 @@
         desc: desc,
         payer: payer,
         notes: notes,
-        amount: finalAmount
+        amount: finalAmount,
+        isDone: false
       });
 
       saveDataToCloud();
@@ -709,7 +703,7 @@
       document.getElementById('trip-notes').value = '';
     }
 
-    // TAMBAH BELANJA BIASA (TERMASUK MEDAN CATATAN)
+    // TAMBAH BELANJA BIASA
     function handleAddExpense(e) {
       e.preventDefault();
       const date = document.getElementById('exp-date').value;
@@ -723,10 +717,29 @@
 
       if (!date || !desc) return;
 
-      expenses.unshift({ id: Date.now(), date, category, desc, notes, payer, amount });
+      expenses.unshift({ 
+        id: Date.now(), 
+        date, 
+        category, 
+        desc, 
+        notes, 
+        payer, 
+        amount, 
+        isDone: false 
+      });
+
       saveDataToCloud();
       e.target.reset();
       document.getElementById('exp-date').value = new Date().toISOString().slice(0, 10);
+    }
+
+    // TUKAR STATUS TRANSAKSI (SELESAI / BELUM SELESAI)
+    function toggleExpenseStatus(id) {
+      const item = expenses.find(x => x.id === id);
+      if (item) {
+        item.isDone = !item.isDone;
+        saveDataToCloud();
+      }
     }
 
     // QUICK-EDIT AMAUN DARI JADUAL
@@ -746,7 +759,7 @@
       }
     }
 
-    // EDIT MODAL KAWALAN (DENGAN MEDAN CATATAN)
+    // EDIT MODAL KAWALAN
     function openEditExpenseModal(id) {
       const item = expenses.find(x => x.id === id);
       if (!item) return;
@@ -758,6 +771,7 @@
       document.getElementById('edit-exp-notes').value = item.notes || "";
       document.getElementById('edit-exp-payer').value = item.payer || "Tabung Usrah";
       document.getElementById('edit-exp-amount').value = item.amount || 0;
+      document.getElementById('edit-exp-done').checked = !!item.isDone;
 
       document.getElementById('modal-edit-expense').classList.remove('hidden');
     }
@@ -776,10 +790,11 @@
       const payer = document.getElementById('edit-exp-payer').value;
       const rawAmount = document.getElementById('edit-exp-amount').value;
       const amount = rawAmount !== "" ? (parseFloat(rawAmount) || 0) : 0;
+      const isDone = document.getElementById('edit-exp-done').checked;
 
       const idx = expenses.findIndex(x => x.id === id);
       if (idx !== -1) {
-        expenses[idx] = { id, date, category, desc, notes, payer, amount };
+        expenses[idx] = { id, date, category, desc, notes, payer, amount, isDone };
         saveDataToCloud();
         closeEditModal();
       }
@@ -843,7 +858,7 @@
       alert("Maklumat akaun bank disimpan ke awan!");
     }
 
-    // MUAT NAIK & SIMPAN QR KE AWAN
+    // MUAT NAIK QR KE AWAN
     function uploadQrCode(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1006,9 +1021,12 @@
         summaryBody.appendChild(sTr);
       });
 
-      // 2. Jadual Perbelanjaan (Dengan Lajur Catatan / Notes)
+      // 2. Jadual Perbelanjaan & Status Selesai
       const totalExpense = expenses.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
+      const completedCount = expenses.filter(x => !!x.isDone).length;
+      
       document.getElementById('badge-total-expenses').innerText = `Total: RM ${totalExpense.toFixed(2)}`;
+      document.getElementById('badge-status-count').innerText = `Selesai: ${completedCount} / ${expenses.length}`;
 
       const expBody = document.getElementById('expense-tbody');
       expBody.innerHTML = '';
@@ -1016,8 +1034,8 @@
       if (expenses.length === 0) {
         expBody.innerHTML = `
           <tr>
-            <td colspan="6" class="py-6 text-center text-slate-400 italic">
-              Tiada rekod perbelanjaan lagi. Rekod di borang sebelah untuk memulakan.
+            <td colspan="7" class="py-6 text-center text-slate-400 italic">
+              Tiada rekod perbelanjaan lagi. Sila rekod pada salah satu borang di atas.
             </td>
           </tr>
         `;
@@ -1028,9 +1046,10 @@
           const isDirectFromTabung = payerName.includes("Tabung Usrah");
           const amtVal = parseFloat(x.amount) || 0;
           const noteText = x.notes ? escapeHtml(x.notes) : '<span class="text-slate-300 italic">—</span>';
+          const isDone = !!x.isDone;
 
           const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50 transition";
+          tr.className = isDone ? "hover:bg-slate-50 transition bg-emerald-50/20" : "hover:bg-slate-50 transition";
           tr.innerHTML = `
             <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">${x.date}</td>
             <td class="py-2.5 px-3">
@@ -1039,12 +1058,11 @@
               </span>
             </td>
             <td class="py-2.5 px-3">
-              <p class="font-medium text-slate-800">${escapeHtml(x.desc)}</p>
+              <p class="font-medium text-slate-800 ${isDone ? 'line-through text-slate-500' : ''}">${escapeHtml(x.desc)}</p>
               <span class="inline-flex items-center gap-1 text-[11px] font-semibold mt-0.5 ${isDirectFromTabung ? 'text-slate-500' : 'text-indigo-600'}">
                 <i class="fa-solid fa-user-check text-[10px]"></i> Dibayar oleh: ${escapeHtml(payerName)}
               </span>
             </td>
-            <!-- PAPARAN CATATAN / NOTES -->
             <td class="py-2.5 px-3 text-slate-600 text-xs max-w-[170px] truncate" title="${escapeHtml(x.notes || '')}">
               ${noteText}
             </td>
@@ -1056,6 +1074,19 @@
                     : 'bg-slate-100 text-slate-400 border-slate-200 hover:bg-slate-200'
                 }">
                 ${amtVal > 0 ? `RM ${amtVal.toFixed(2)}` : 'RM 0.00 (Set)'}
+              </button>
+            </td>
+            <!-- BUTANG STATUS SELESAI / DONE -->
+            <td class="py-2.5 px-3 text-center whitespace-nowrap">
+              <button onclick="toggleExpenseStatus(${x.id})" 
+                title="${isDone ? 'Klik untuk tanda Belum Selesai' : 'Klik untuk tandakan Selesai / Paid'}"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition shadow-xs ${
+                  isDone 
+                    ? 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300' 
+                    : 'bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300'
+                }">
+                <i class="fa-solid ${isDone ? 'fa-circle-check text-emerald-600' : 'fa-clock text-amber-500'}"></i>
+                <span>${isDone ? 'Selesai' : 'Belum Selesai'}</span>
               </button>
             </td>
             <td class="py-2.5 px-3 text-center whitespace-nowrap space-x-2">
@@ -1109,6 +1140,7 @@
       const tripDate = document.getElementById('trip-date');
       if (expDate) expDate.value = today;
       if (tripDate) tripDate.value = today;
+      calculateTripCost();
     };
   </script>
 </body>
