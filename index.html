@@ -158,10 +158,8 @@
       </div>
     </section>
 
-    <!-- 3. PERBELANJAAN & TUNTUTAN KENDERAAN TAB (2 HORIZONTAL COLUMNS + UNIFIED CLEAR TABLE) -->
+    <!-- 3. PERBELANJAAN & TUNTUTAN KENDERAAN TAB -->
     <section id="tab-belanja" class="tab-content hidden space-y-6">
-
-      <!-- 2 HORIZONTAL COLUMNS: BORANG PERBELANJAAN (KIRI) & BORANG KENDERAAN (KANAN) -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
         <!-- LAJUR 1: BORANG PERBELANJAAN BIASA -->
@@ -318,7 +316,7 @@
 
       </div>
 
-      <!-- SEJARAH TRANSAKSI PERBELANJAAN (LAJUR DENGAN SEMUA PERKATAAN JELAS & PENUH) -->
+      <!-- SEJARAH TRANSAKSI PERBELANJAAN -->
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div>
@@ -346,7 +344,6 @@
               <tr>
                 <th class="py-3 px-3.5 whitespace-nowrap">Tarikh</th>
                 <th class="py-3 px-3 whitespace-nowrap">Kategori</th>
-                <!-- LAJUR DIGABUNG: BUTIRAN, PEMBAYAR & CATATAN DIPAPARKAN PENUH & JELAS -->
                 <th class="py-3 px-4 min-w-[280px]">Butiran Pembelian, Pembayar & Catatan Lengkap</th>
                 <th class="py-3 px-3 text-right whitespace-nowrap">Jumlah (RM)</th>
                 <th class="py-3 px-3 text-center whitespace-nowrap">Status</th>
@@ -362,8 +359,6 @@
 
     <!-- 4. TABUNG KILAT (KECEMASAN / HAL SEGERA) TAB -->
     <section id="tab-kilat" class="tab-content hidden space-y-6">
-      
-      <!-- HEADER BANNER TABUNG KILAT -->
       <div class="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white p-5 rounded-3xl shadow-sm space-y-2">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
@@ -381,7 +376,6 @@
         </div>
       </div>
 
-      <!-- KAD STATISTIK TABUNG KILAT -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Sumbangan Masuk</span>
@@ -401,8 +395,6 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- BORANG INPUT REKOD TABUNG KILAT -->
         <div class="lg:col-span-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-2">
             <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
@@ -459,7 +451,6 @@
           </form>
         </div>
 
-        <!-- JADUAL REKOD TABUNG KILAT (PENUH & JELAS) -->
         <div class="lg:col-span-7 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div>
@@ -489,74 +480,178 @@
             </table>
           </div>
         </div>
-
       </div>
-
     </section>
 
-    <!-- 5. QR CODE & MAKLUMAT BANK TAB -->
+    <!-- 5. QR CODE & MAKLUMAT BANK TAB (KINI DENGAN RUANG QR TAMBAHAN TANPA HAD) -->
     <section id="tab-qr" class="tab-content hidden space-y-6">
-      <div class="max-w-xl mx-auto space-y-6">
+      
+      <!-- SUB HEADER KETERANGAN -->
+      <div class="bg-white rounded-2xl p-4 md:p-5 border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-qrcode text-brand-600"></i> Pusat Pembayaran & Koleksi Kod QR
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Imbas kod QR rasmi usrah atau lihat senarai QR tambahan yang dimuat naik tanpa had (T&G eWallet, MAE, Tabung Kilat, dll).
+          </p>
+        </div>
+        <button onclick="document.getElementById('form-add-new-qr').scrollIntoView({ behavior: 'smooth' })" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-sm transition flex items-center gap-2 shrink-0">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Muat Naik QR Tambahan
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 text-center p-6">
-          <span class="inline-block bg-brand-100 text-brand-800 text-xs px-3 py-1 rounded-full font-semibold mb-2">
-            Saluran Rasmi Bayaran Usrah
-          </span>
-          <h2 class="text-lg font-bold text-slate-800">Imbas QR DuitNow</h2>
-          <p class="text-xs text-slate-500 mb-5">Rujukan transaksi: <b class="text-brand-700">Infaq Usrah [Nama Anda]</b></p>
+        <!-- BAHAGIAN KIRI: QR UTAMA & MAKLUMAT BANK RASMI (5 COLUMNS) -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- KAD QR UTAMA -->
+          <div class="bg-white rounded-3xl shadow-sm border-2 border-brand-500/30 text-center p-5 relative overflow-hidden">
+            <div class="absolute top-0 right-0 bg-brand-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+              QR Utama (Rasmi)
+            </div>
 
-          <div class="bg-slate-50 border-2 border-dashed border-slate-200 p-4 rounded-2xl mx-auto inline-block max-w-[260px] relative group">
-            <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=DuitNow-Kutipan-Usrah-Ridwanullah" alt="QR Bayaran" class="w-56 h-56 object-contain rounded-xl shadow-sm bg-white" />
-            <label for="qr-upload" class="cursor-pointer text-[11px] text-brand-700 bg-white border border-slate-300 hover:bg-slate-100 px-3 py-1.5 rounded-full absolute bottom-2 left-1/2 -translate-x-1/2 shadow font-medium whitespace-nowrap">
-              <i class="fa-solid fa-camera"></i> Muat Naik Gambar QR
-            </label>
-            <input type="file" id="qr-upload" accept="image/*" class="hidden" onchange="uploadQrCode(event)" />
+            <span class="inline-block bg-brand-50 text-brand-800 border border-brand-200 text-xs px-3 py-1 rounded-full font-semibold mb-2 mt-2">
+              Saluran Rasmi Usrah
+            </span>
+            <h3 class="text-base font-extrabold text-slate-800">DuitNow Rasmi Bendahari</h3>
+            <p class="text-xs text-slate-500 mb-4">Rujukan: <b class="text-brand-700">Infaq Usrah [Nama Anda]</b></p>
+
+            <div class="bg-slate-50 border-2 border-dashed border-slate-300 p-3 rounded-2xl mx-auto inline-block relative group max-w-[240px]">
+              <img id="qr-image" 
+                   src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=DuitNow-Kutipan-Usrah-Ridwanullah" 
+                   alt="QR Bayaran Utama" 
+                   onclick="openImagePreview(this.src, 'QR Utama - ' + bankInfo.bankName)"
+                   title="Klik untuk lihat gambar saiz penuh"
+                   class="w-48 h-48 md:w-52 md:h-52 object-contain rounded-xl shadow-sm bg-white cursor-pointer hover:opacity-95 transition" />
+              
+              <label for="qr-upload" class="cursor-pointer text-[11px] text-brand-800 bg-white/95 backdrop-blur-sm border border-slate-300 hover:bg-slate-100 px-3 py-1.5 rounded-full absolute bottom-2 left-1/2 -translate-x-1/2 shadow font-semibold whitespace-nowrap transition">
+                <i class="fa-solid fa-camera"></i> Tukar QR Utama
+              </label>
+              <input type="file" id="qr-upload" accept="image/*" class="hidden" onchange="uploadQrCode(event)" />
+            </div>
+            <p class="text-[10px] text-slate-400 mt-2 italic"><i class="fa-solid fa-magnifying-glass-plus"></i> Klik gambar QR untuk besarkan skrin</p>
+
+            <!-- MAKLUMAT AKAUN BANK -->
+            <div class="mt-4 bg-slate-50/80 rounded-2xl p-4 text-left border border-slate-200 space-y-2 text-xs">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-500 font-medium">Bank:</span>
+                <span class="font-bold text-slate-800" id="disp-bank-name">Maybank / CIMB</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-500 font-medium">Nama Penerima:</span>
+                <span class="font-bold text-slate-800" id="disp-acc-holder">Bendahari Usrah</span>
+              </div>
+              <div class="flex justify-between items-center border-t border-slate-200 pt-2">
+                <span class="text-slate-500 font-medium">Nombor Akaun:</span>
+                <span class="font-mono font-extrabold text-brand-700 text-sm md:text-base" id="disp-acc-number">162000000000</span>
+              </div>
+            </div>
+
+            <button onclick="copyAccNumber()" class="mt-3 w-full bg-slate-800 hover:bg-slate-900 active:scale-[0.99] text-white text-xs font-semibold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
+              <i class="fa-regular fa-copy"></i> Salin No. Akaun Utama
+            </button>
           </div>
 
-          <div class="mt-6 bg-slate-50 rounded-2xl p-4 text-left border border-slate-200 space-y-2.5 text-xs">
-            <div class="flex justify-between items-center">
-              <span class="text-slate-500 font-medium">Bank:</span>
-              <span class="font-bold text-slate-800 text-sm" id="disp-bank-name">Maybank / CIMB</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-slate-500 font-medium">Nama Penerima:</span>
-              <span class="font-bold text-slate-800 text-sm" id="disp-acc-holder">Bendahari Usrah</span>
-            </div>
-            <div class="flex justify-between items-center border-t border-slate-200/60 pt-2">
-              <span class="text-slate-500 font-medium">Nombor Akaun:</span>
-              <span class="font-mono font-extrabold text-brand-700 text-base" id="disp-acc-number">162000000000</span>
-            </div>
+          <!-- KEMASKINI MAKLUMAT BANK BENDAHARI -->
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-5">
+            <h3 class="font-bold text-slate-800 text-xs md:text-sm mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-pen-to-square text-brand-600"></i> Kemaskini Maklumat Bank Bendahari
+            </h3>
+            <form id="form-bank-details" onsubmit="saveBankDetails(event)" class="space-y-3 text-xs">
+              <div>
+                <label class="block font-medium text-slate-600 mb-1">Nama Bank</label>
+                <input type="text" id="input-bank-name" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block font-medium text-slate-600 mb-1">Nama Penerima</label>
+                <input type="text" id="input-acc-holder" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block font-medium text-slate-600 mb-1">Nombor Akaun</label>
+                <input type="text" id="input-acc-number" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none font-mono" />
+              </div>
+              <button type="submit" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-semibold py-2 rounded-xl transition text-xs flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-floppy-disk"></i> Simpan Maklumat Bank ke Awan
+              </button>
+            </form>
           </div>
 
-          <button onclick="copyAccNumber()" class="mt-4 w-full bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
-            <i class="fa-regular fa-copy"></i> Salin No. Akaun
-          </button>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-          <h3 class="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-pen-to-square text-brand-600"></i> Kemaskini Maklumat Bank Bendahari
-          </h3>
-          <form id="form-bank-details" onsubmit="saveBankDetails(event)" class="space-y-3 text-xs">
-            <div>
-              <label class="block font-medium text-slate-600 mb-1">Nama Bank</label>
-              <input type="text" id="input-bank-name" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+        <!-- BAHAGIAN KANAN: RUANG QR TAMBAHAN TANPA HAD (7 COLUMNS) -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- BORANG TAMBAH QR TAMBAHAN -->
+          <div id="form-add-new-qr" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+              <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                <span class="p-1.5 bg-brand-100 text-brand-700 rounded-lg"><i class="fa-solid fa-circle-plus"></i></span>
+                Muat Naik QR Tambahan (Tanpa Had)
+              </h3>
+              <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">
+                Auto Simpan Awan
+              </span>
             </div>
-            <div>
-              <label class="block font-medium text-slate-600 mb-1">Nama Penerima</label>
-              <input type="text" id="input-acc-holder" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+
+            <form onsubmit="handleUploadAdditionalQr(event)" class="space-y-3 text-xs">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-medium text-slate-700 mb-1">Nama / Label QR *</label>
+                  <input type="text" id="add-qr-title" placeholder="Cth: TNG eWallet / Bank Islam / Tabung Kecemasan" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-500 outline-none" />
+                </div>
+                <div>
+                  <label class="block font-medium text-slate-700 mb-1">No. Akaun / Tel (Pilihan)</label>
+                  <input type="text" id="add-qr-acc" placeholder="Cth: 012-3456789 / 120290200..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-500 outline-none font-mono" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-medium text-slate-700 mb-1">Nama Pemilik / Catatan Ringkas (Pilihan)</label>
+                  <input type="text" id="add-qr-notes" placeholder="Cth: Kak Nisa / Simpanan khas usrah" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-500 outline-none" />
+                </div>
+                <div>
+                  <label class="block font-medium text-slate-700 mb-1">Pilih Fail Gambar QR *</label>
+                  <input type="file" id="add-qr-file" accept="image/*" required class="w-full border border-slate-300 rounded-lg p-1.5 bg-slate-50 text-slate-600 text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 cursor-pointer" />
+                </div>
+              </div>
+
+              <button type="submit" id="btn-save-additional-qr" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus"></i> Tambah Kod QR Ini
+              </button>
+            </form>
+          </div>
+
+          <!-- SENARAI & PENCARIAN QR TAMBAHAN -->
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                  <i class="fa-solid fa-layer-group text-brand-600"></i> Senarai Kod QR Tambahan
+                  <span id="badge-qr-count" class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold border border-slate-200">0 QR</span>
+                </h3>
+                <p class="text-xs text-slate-500">Klik butang imej untuk membesarkan QR bagi memudahkan imbasan.</p>
+              </div>
+
+              <!-- CARIAN CEPAT QR -->
+              <div class="relative w-full sm:w-56">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="search-qr-input" oninput="renderAdditionalQrs()" placeholder="Cari QR mengikut nama..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-brand-500" />
+              </div>
             </div>
-            <div>
-              <label class="block font-medium text-slate-600 mb-1">Nombor Akaun</label>
-              <input type="text" id="input-acc-number" required class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none font-mono" />
+
+            <!-- GRID KAD-KAD QR TAMBAHAN -->
+            <div id="additional-qr-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Dynamically populated via JS -->
             </div>
-            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2 px-4 rounded-xl shadow transition text-xs">
-              Simpan Maklumat Akaun (Awan)
-            </button>
-          </form>
+          </div>
+
         </div>
 
       </div>
+
     </section>
 
   </main>
@@ -632,6 +727,25 @@
     </div>
   </div>
 
+  <!-- MODAL PREVIEW / ZOOM QR BESAR (MEMUDAHKAN IMBASAN TELEFON LAIN) -->
+  <div id="modal-qr-preview" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeImagePreview()">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl relative" onclick="event.stopPropagation()">
+      <button onclick="closeImagePreview()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 id="preview-qr-title" class="font-bold text-slate-800 text-base pr-6">Kod QR</h3>
+      <div class="bg-white p-3 border-2 border-slate-200 rounded-2xl inline-block shadow-inner">
+        <img id="preview-qr-image" src="" alt="Pratonton QR" class="w-64 h-64 object-contain rounded-xl" />
+      </div>
+      <p id="preview-qr-desc" class="text-xs text-slate-500 font-medium"></p>
+      
+      <button onclick="closeImagePreview()" class="w-full bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2.5 rounded-xl transition">
+        Tutup Paparan
+      </button>
+    </div>
+  </div>
+
   <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
     E-Bendahari Usrah Ridwanullah • GitHub Pages & Firebase Live Sync
   </footer>
@@ -653,7 +767,7 @@
     const RATE_OIL = 0.125;   // RM 0.125 / km
     const RATE_MILEAGE = 0.05; // RM 0.05 / km
 
-    // DATA ASAL AHLI (NIKI TELAH DIBUANG)
+    // DATA ASAL AHLI
     const INITIAL_MEMBERS = [
       { id: 1, name: "Kak Nisa", payments: [2, 2, 0, 0, 0, 0, 0, 0, 0, 0] },
       { id: 2, name: "Sakinah", payments: [2, 2, 2, 2, 2, 0, 0, 0, 0, 0] },
@@ -678,8 +792,9 @@
     let dates = INITIAL_DATES;
     let bankInfo = INITIAL_BANK;
     let expenses = [];
-    let tabungKilat = []; // ARRAY DATA TABUNG KILAT
+    let tabungKilat = [];
     let qrImageCloud = "";
+    let additionalQrs = []; // ARRAY QR TAMBAHAN TANPA HAD
     let dbRef = null;
     let isFirebaseReady = false;
 
@@ -703,6 +818,7 @@
             bankInfo = data.bankInfo || INITIAL_BANK;
             expenses = data.expenses || [];
             tabungKilat = data.tabungKilat || [];
+            additionalQrs = data.additionalQrs || [];
             if (data.qrImage) {
               qrImageCloud = data.qrImage;
               document.getElementById('qr-image').src = qrImageCloud;
@@ -730,6 +846,7 @@
         bankInfo = JSON.parse(localStorage.getItem('usrah_bank_v5')) || INITIAL_BANK;
         expenses = JSON.parse(localStorage.getItem('usrah_exp_v5')) || [];
         tabungKilat = JSON.parse(localStorage.getItem('usrah_kilat_v5')) || [];
+        additionalQrs = JSON.parse(localStorage.getItem('usrah_additional_qrs_v5')) || [];
         qrImageCloud = localStorage.getItem('usrah_qr_img_v5') || "";
         renderAll();
       }
@@ -750,9 +867,18 @@
       }
     }
 
-    // SIMPAN DATA KE AWAN
+    // SIMPAN DATA KE AWAN & LOCALSTORAGE
     function saveDataToCloud() {
-      const payload = { members, dates, bankInfo, expenses, tabungKilat, qrImage: qrImageCloud };
+      const payload = { 
+        members, 
+        dates, 
+        bankInfo, 
+        expenses, 
+        tabungKilat, 
+        qrImage: qrImageCloud,
+        additionalQrs: additionalQrs 
+      };
+      
       if (isFirebaseReady && dbRef) {
         dbRef.set(payload);
       } else {
@@ -761,6 +887,7 @@
         localStorage.setItem('usrah_bank_v5', JSON.stringify(bankInfo));
         localStorage.setItem('usrah_exp_v5', JSON.stringify(expenses));
         localStorage.setItem('usrah_kilat_v5', JSON.stringify(tabungKilat));
+        localStorage.setItem('usrah_additional_qrs_v5', JSON.stringify(additionalQrs));
         if (qrImageCloud) localStorage.setItem('usrah_qr_img_v5', qrImageCloud);
         renderAll();
       }
@@ -781,6 +908,199 @@
         selectedBtn.classList.add('border-white', 'text-white');
         selectedBtn.classList.remove('border-transparent', 'text-brand-100');
       }
+    }
+
+    // ==========================================
+    // LOGIK QR CODE TAMBAHAN (TANPA HAD)
+    // ==========================================
+
+    // Memampatkan fail imej kepada resolusi optimum agar simpanan awan kekal pantas
+    function compressImageFile(file, maxWidth, quality, callback) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          let w = img.width;
+          let h = img.height;
+          if (w > maxWidth) {
+            h = Math.round((h * maxWidth) / w);
+            w = maxWidth;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL('image/jpeg', quality);
+          callback(compressed);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Muat naik QR Tambahan Baru
+    function handleUploadAdditionalQr(e) {
+      e.preventDefault();
+      const title = document.getElementById('add-qr-title').value.trim();
+      const acc = document.getElementById('add-qr-acc').value.trim();
+      const notes = document.getElementById('add-qr-notes').value.trim();
+      const fileInput = document.getElementById('add-qr-file');
+      const file = fileInput.files[0];
+
+      if (!title || !file) {
+        alert("Sila lengkapkan tajuk dan pilih fail gambar QR.");
+        return;
+      }
+
+      const btn = document.getElementById('btn-save-additional-qr');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memampatkan & Menyimpan...`;
+
+      compressImageFile(file, 450, 0.78, function(base64Image) {
+        const newQr = {
+          id: Date.now(),
+          title: title,
+          acc: acc,
+          notes: notes,
+          image: base64Image,
+          dateAdded: new Date().toLocaleDateString('ms-MY')
+        };
+
+        additionalQrs.unshift(newQr);
+        saveDataToCloud();
+
+        // Reset borang
+        document.getElementById('add-qr-title').value = '';
+        document.getElementById('add-qr-acc').value = '';
+        document.getElementById('add-qr-notes').value = '';
+        fileInput.value = '';
+
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-plus"></i> Tambah Kod QR Ini`;
+        alert(`✅ QR "${title}" berjaya disimpan ke simpanan awan!`);
+      });
+    }
+
+    // Padam QR Tambahan
+    function deleteAdditionalQr(id) {
+      const target = additionalQrs.find(q => q.id === id);
+      const title = target ? target.title : "QR";
+      if (confirm(`Adakah anda pasti mahu memadam kod QR "${title}"?`)) {
+        additionalQrs = additionalQrs.filter(q => q.id !== id);
+        saveDataToCloud();
+      }
+    }
+
+    // Salin teks/nombor akaun
+    function copyText(text, desc = "Nombor") {
+      if (!text) return;
+      navigator.clipboard.writeText(text);
+      alert(`${desc} disalin: ${text}`);
+    }
+
+    // Pembesar Gambar / Lightbox
+    function openImagePreview(src, title, desc = "") {
+      document.getElementById('preview-qr-image').src = src;
+      document.getElementById('preview-qr-title').innerText = title || "Kod QR";
+      document.getElementById('preview-qr-desc').innerText = desc || "Sedia untuk diimbas terus daripada skrin ini.";
+      document.getElementById('modal-qr-preview').classList.remove('hidden');
+    }
+
+    function closeImagePreview() {
+      document.getElementById('modal-qr-preview').classList.add('hidden');
+    }
+
+    // Render Galeri QR Tambahan
+    function renderAdditionalQrs() {
+      const container = document.getElementById('additional-qr-grid');
+      const badgeCount = document.getElementById('badge-qr-count');
+      const searchVal = (document.getElementById('search-qr-input')?.value || '').toLowerCase().trim();
+
+      if (!container) return;
+
+      const filtered = additionalQrs.filter(q => 
+        (q.title || '').toLowerCase().includes(searchVal) ||
+        (q.acc || '').toLowerCase().includes(searchVal) ||
+        (q.notes || '').toLowerCase().includes(searchVal)
+      );
+
+      if (badgeCount) badgeCount.innerText = `${additionalQrs.length} QR Dimuat Naik`;
+
+      if (additionalQrs.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-10 px-4 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
+            <div class="w-12 h-12 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center mx-auto mb-3 text-lg">
+              <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <h4 class="font-bold text-slate-700 text-sm">Tiada QR Tambahan Lagi</h4>
+            <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+              Gunakan borang di atas untuk muat naik sebarang QR seperti Touch 'n Go eWallet, MAE, Bank Islam, atau QR kecemasan tanpa had.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-8 text-center text-slate-400 text-xs italic">
+            Tiada QR ditemui bagi carian "${escapeHtml(searchVal)}".
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(q => `
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between hover:shadow-md transition group">
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <div class="min-w-0 flex-1">
+                <h4 class="font-bold text-slate-800 text-xs truncate" title="${escapeHtml(q.title)}">
+                  ${escapeHtml(q.title)}
+                </h4>
+                <p class="text-[10px] text-slate-400">Ditambah: ${q.dateAdded || '-'}</p>
+              </div>
+              <button onclick="deleteAdditionalQr(${q.id})" title="Padam QR ini" class="text-slate-400 hover:text-rose-600 p-1 transition rounded-lg hover:bg-rose-50">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </div>
+
+            <!-- PREVIEW KECIL DENGAN KLIK UNTUK BESARKAN -->
+            <div class="relative bg-white border border-slate-200 rounded-xl p-2 text-center group-hover:border-brand-300 transition overflow-hidden">
+              <img src="${q.image}" 
+                   alt="${escapeHtml(q.title)}" 
+                   onclick="openImagePreview('${q.image}', '${escapeHtml(q.title)}', '${escapeHtml(q.acc ? 'No. Akaun/Tel: ' + q.acc : '')}')"
+                   title="Klik untuk lihat saiz penuh"
+                   class="w-full h-36 object-contain rounded-lg mx-auto cursor-pointer hover:scale-105 transition duration-200" />
+              
+              <button onclick="openImagePreview('${q.image}', '${escapeHtml(q.title)}', '${escapeHtml(q.acc ? 'No. Akaun/Tel: ' + q.acc : '')}')" 
+                      class="absolute bottom-2 right-2 bg-slate-800/80 hover:bg-slate-900 text-white text-[10px] px-2 py-1 rounded-md backdrop-blur-xs flex items-center gap-1 shadow">
+                <i class="fa-solid fa-expand text-[9px]"></i> Besarkan
+              </button>
+            </div>
+
+            <!-- BUTIRAN AKAUN / CATATAN -->
+            <div class="mt-2.5 space-y-1.5 text-xs">
+              ${q.acc ? `
+                <div class="flex items-center justify-between bg-white border border-slate-200/80 rounded-lg px-2.5 py-1.5">
+                  <span class="font-mono font-bold text-brand-800 text-[11px] truncate mr-1">${escapeHtml(q.acc)}</span>
+                  <button onclick="copyText('${escapeHtml(q.acc)}', 'No. Akaun')" class="text-slate-500 hover:text-brand-700 text-[10px] font-semibold flex items-center gap-1 hover:bg-slate-100 px-1.5 py-0.5 rounded transition shrink-0">
+                    <i class="fa-regular fa-copy"></i> Salin
+                  </button>
+                </div>
+              ` : ''}
+
+              ${q.notes ? `
+                <p class="text-[11px] text-slate-600 bg-amber-50/70 border border-amber-200/70 px-2 py-1 rounded-md flex items-center gap-1">
+                  <i class="fa-solid fa-circle-info text-[10px] text-amber-600 shrink-0"></i>
+                  <span class="truncate">${escapeHtml(q.notes)}</span>
+                </p>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
     }
 
     // VEHICLE TRIP CALCULATOR
@@ -874,7 +1194,6 @@
       document.getElementById('exp-date').value = new Date().toISOString().slice(0, 10);
     }
 
-    // TUKAR STATUS TRANSAKSI (SELESAI / BELUM SELESAI)
     function toggleExpenseStatus(id) {
       const item = expenses.find(x => x.id === id);
       if (item) {
@@ -883,7 +1202,6 @@
       }
     }
 
-    // QUICK-EDIT AMAUN BELANJA
     function quickEditExpenseAmount(id) {
       const item = expenses.find(x => x.id === id);
       if (!item) return;
@@ -900,7 +1218,6 @@
       }
     }
 
-    // EDIT MODAL BELANJA
     function openEditExpenseModal(id) {
       const item = expenses.find(x => x.id === id);
       if (!item) return;
@@ -1089,40 +1406,17 @@
       alert("Maklumat akaun bank disimpan ke awan!");
     }
 
-    // MUAT NAIK QR KE AWAN
+    // MUAT NAIK QR UTAMA KE AWAN
     function uploadQrCode(event) {
       const file = event.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const maxDim = 400;
-          let w = img.width;
-          let h = img.height;
-          if (w > h && w > maxDim) {
-            h = Math.round((h * maxDim) / w);
-            w = maxDim;
-          } else if (h > maxDim) {
-            h = Math.round((h * maxDim) / h);
-            h = maxDim;
-          }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
-          qrImageCloud = compressedBase64;
-          document.getElementById('qr-image').src = qrImageCloud;
-          saveDataToCloud();
-          alert("✅ Gambar QR berjaya disimpan ke awan! Semua ahli kini boleh melihat QR ini secara kekal.");
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+      compressImageFile(file, 450, 0.8, function(compressedBase64) {
+        qrImageCloud = compressedBase64;
+        document.getElementById('qr-image').src = qrImageCloud;
+        saveDataToCloud();
+        alert("✅ Gambar QR Utama berjaya dikemaskini ke awan!");
+      });
     }
 
     function copyAccNumber() {
@@ -1220,7 +1514,6 @@
         `;
         matrixBody.appendChild(tr);
 
-        // Status Kedudukan
         const diff = memberPaidTotal - targetMinPerMember;
         let statusBadge = "";
         let dueAmount = 0;
@@ -1252,7 +1545,7 @@
         summaryBody.appendChild(sTr);
       });
 
-      // 2. Jadual Perbelanjaan (Lajur Digabung & Teks Jelas Penuh)
+      // 2. Jadual Perbelanjaan
       const totalExpense = expenses.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
       const completedCount = expenses.filter(x => !!x.isDone).length;
       
@@ -1287,7 +1580,6 @@
                 ${x.category}
               </span>
             </td>
-            <!-- GABUNGAN SEMUA PERKATAAN: BUTIRAN + PEMBAYAR + CATATAN SECARA PENUH -->
             <td class="py-3 px-4 align-top">
               <div class="font-bold text-slate-800 text-xs md:text-sm leading-snug ${isDone ? 'line-through text-slate-400' : ''}">
                 ${escapeHtml(x.desc)}
@@ -1317,7 +1609,6 @@
                 ${amtVal > 0 ? `RM ${amtVal.toFixed(2)}` : 'RM 0.00 (Set)'}
               </button>
             </td>
-            <!-- BUTANG STATUS SELESAI / DONE -->
             <td class="py-3 px-3 text-center whitespace-nowrap align-top">
               <button onclick="toggleExpenseStatus(${x.id})" 
                 title="${isDone ? 'Klik untuk tukar ke Belum Selesai' : 'Klik untuk tandakan Selesai / Paid'}"
@@ -1343,7 +1634,7 @@
         });
       }
 
-      // 3. Render Tabung Kilat (Kecemasan)
+      // 3. Render Tabung Kilat
       let kilatMasuk = 0;
       let kilatKeluar = 0;
       const kilatBody = document.getElementById('kilat-tbody');
@@ -1417,9 +1708,8 @@
       document.getElementById('stat-kutipan').innerText = `RM ${totalActualInflow.toFixed(2)}`;
       document.getElementById('stat-belanja').innerText = `RM ${totalExpense.toFixed(2)}`;
       document.getElementById('stat-baki').innerText = `RM ${bakiBersih.toFixed(2)}`;
-      document.getElementById('stat-tunggakan').innerText = `RM ${totalDueAll.toFixed(2)}`;
 
-      // 5. Update Maklumat Bank
+      // 5. Update Maklumat Bank & QR Utama
       document.getElementById('disp-bank-name').innerText = bankInfo.bankName;
       document.getElementById('disp-acc-holder').innerText = bankInfo.accHolder;
       document.getElementById('disp-acc-number').innerText = bankInfo.accNumber;
@@ -1431,11 +1721,22 @@
       if (qrImageCloud) {
         document.getElementById('qr-image').src = qrImageCloud;
       }
+
+      // 6. Render Senarai QR Tambahan
+      renderAdditionalQrs();
     }
 
-    // BACKUP LOCAL JSON (TERMASUK TABUNG KILAT)
+    // BACKUP LOCAL JSON (TERMASUK QR TAMBAHAN & TABUNG KILAT)
     function exportData() {
-      const data = { members, dates, expenses, tabungKilat, bankInfo, qrImage: qrImageCloud };
+      const data = { 
+        members, 
+        dates, 
+        expenses, 
+        tabungKilat, 
+        bankInfo, 
+        qrImage: qrImageCloud,
+        additionalQrs: additionalQrs 
+      };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
