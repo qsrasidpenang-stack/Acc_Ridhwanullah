@@ -141,7 +141,7 @@
               <i class="fa-solid fa-table-cells text-brand-600"></i> Matriks Kutipan Mengikut Sesi
             </h2>
             <p class="text-xs text-slate-500">
-              Klik pada kotak amaun untuk tandakan RM 2, atau klik untuk masukkan jumlah lain (cth: RM 5, RM 10).
+              Tarikh disusun automatik mengikut kalendar. Klik pada kotak amaun untuk ubah bayaran.
             </p>
           </div>
           <button onclick="addNewSessionPrompt()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-3 py-2 rounded-xl flex items-center gap-1.5 transition self-start md:self-auto shadow-sm">
@@ -483,7 +483,7 @@
       </div>
     </section>
 
-    <!-- 5. QR CODE & MAKLUMAT BANK TAB (KINI DENGAN RUANG QR TAMBAHAN TANPA HAD) -->
+    <!-- 5. QR CODE & MAKLUMAT BANK TAB -->
     <section id="tab-qr" class="tab-content hidden space-y-6">
       
       <!-- SUB HEADER KETERANGAN -->
@@ -643,9 +643,7 @@
             </div>
 
             <!-- GRID KAD-KAD QR TAMBAHAN -->
-            <div id="additional-qr-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <!-- Dynamically populated via JS -->
-            </div>
+            <div id="additional-qr-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
           </div>
 
         </div>
@@ -727,7 +725,7 @@
     </div>
   </div>
 
-  <!-- MODAL PREVIEW / ZOOM QR BESAR (MEMUDAHKAN IMBASAN TELEFON LAIN) -->
+  <!-- MODAL PREVIEW / ZOOM QR BESAR -->
   <div id="modal-qr-preview" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeImagePreview()">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl relative" onclick="event.stopPropagation()">
       <button onclick="closeImagePreview()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition">
@@ -794,9 +792,113 @@
     let expenses = [];
     let tabungKilat = [];
     let qrImageCloud = "";
-    let additionalQrs = []; // ARRAY QR TAMBAHAN TANPA HAD
+    let additionalQrs = [];
     let dbRef = null;
     let isFirebaseReady = false;
+
+    // =========================================================================
+    // FUNGSI SUSUNAN MASA KALENDAR (CHRONOLOGICAL ORDER & PAYMENT SYNC)
+    // =========================================================================
+    function parseDateStrToTimestamp(str) {
+      if (!str) return 0;
+      const cleaned = String(str).trim();
+      
+      // Jika format ISO (cth: 2026-08-25)
+      if (cleaned.includes('-')) {
+        const parts = cleaned.split('-');
+        if (parts.length === 3) {
+          const y = parseInt(parts[0], 10);
+          const m = parseInt(parts[1], 10) - 1;
+          const d = parseInt(parts[2], 10);
+          return new Date(y, m, d).getTime() || 0;
+        }
+      }
+
+      // Jika format umum Malaysia D/M/YY atau DD/MM/YYYY (cth: 26/6/26, 05/07/2026)
+      if (cleaned.includes('/')) {
+        const parts = cleaned.split('/').map(p => parseInt(p.trim(), 10));
+        if (parts.length === 3) {
+          let [d, m, y] = parts;
+          if (y < 100) y += 2000; // 26 -> 2026
+          return new Date(y, m - 1, d).getTime() || 0;
+        }
+      }
+
+      const t = Date.parse(cleaned);
+      return isNaN(t) ? 0 : t;
+    }
+
+    function sortSessionsChronologically() {
+      if (!dates || dates.length <= 1) return;
+
+      const indexed = dates.map((d, i) => ({
+        date: d,
+        origIdx: i,
+        ts: parseDateStrToTimestamp(d)
+      }));
+
+      // Susun mengikut masa kalendar secara menaik (terawal ke terkini)
+      indexed.sort((a, b) => a.ts - b.ts);
+
+      const isAlreadySorted = indexed.every((item, i) => item.origIdx === i);
+      if (isAlreadySorted) return;
+
+      const newDates = indexed.map(item => item.date);
+      members.forEach(m => {
+        const originalPayments = Array.isArray(m.payments) ? m.payments : [];
+        m.payments = indexed.map(item => (originalPayments[item.origIdx] !== undefined ? originalPayments[item.origIdx] : 0));
+      });
+
+      dates = newDates;
+    }
+
+    // =========================================================================
+    // PADAM TARIKH SESI TERKAWAL (CONTROLLED SESSION DELETION)
+    // =========================================================================
+    function deleteSessionPrompt(dIdx) {
+      const sessionDate = dates[dIdx];
+      if (!sessionDate) return;
+
+      const promptInput = prompt(
+        `⚠️ AMARAN: PADAM SESI USRAH (${sessionDate})\n\n` +
+        `Semua data bayaran ahli pada tarikh sesi ini akan dibuang secara kekal.\n\n` +
+        `Untuk mengesahkan tindakan ini, sila taip perkataan "PADAM" di bawah:`
+      );
+
+      if (promptInput && promptInput.trim().toUpperCase() === "PADAM") {
+        dates.splice(dIdx, 1);
+        members.forEach(m => {
+          if (Array.isArray(m.payments) && m.payments.length > dIdx) {
+            m.payments.splice(dIdx, 1);
+          }
+        });
+        sortSessionsChronologically();
+        saveDataToCloud();
+        alert(`✅ Sesi ${sessionDate} berjaya dipadamkan.`);
+      }
+    }
+
+    // TAMBAH SESI BARU DENGAN AUTO SORT
+    function addNewSessionPrompt() {
+      const newDate = prompt("Masukkan tarikh sesi usrah baru (cth: 13/9/26 atau format YYYY-MM-DD):");
+      if (newDate && newDate.trim() !== "") {
+        let raw = newDate.trim();
+        let formattedDate = raw;
+        if (raw.includes('-')) {
+          const p = raw.split('-');
+          if (p.length === 3 && p[0].length === 4) {
+            formattedDate = `${parseInt(p[2], 10)}/${parseInt(p[1], 10)}/${p[0].slice(2)}`;
+          }
+        }
+        dates.push(formattedDate);
+        members.forEach(m => {
+          if (!Array.isArray(m.payments)) m.payments = [];
+          m.payments.push(0);
+        });
+        sortSessionsChronologically();
+        saveDataToCloud();
+      }
+    }
 
     // INISIALISASI FIREBASE
     try {
@@ -824,10 +926,13 @@
               document.getElementById('qr-image').src = qrImageCloud;
             }
 
+            sortSessionsChronologically();
+
             if (hadNiki) {
               saveDataToCloud();
             }
           } else {
+            sortSessionsChronologically();
             saveDataToCloud();
           }
           updateSyncStatus(true);
@@ -848,10 +953,12 @@
         tabungKilat = JSON.parse(localStorage.getItem('usrah_kilat_v5')) || [];
         additionalQrs = JSON.parse(localStorage.getItem('usrah_additional_qrs_v5')) || [];
         qrImageCloud = localStorage.getItem('usrah_qr_img_v5') || "";
+        sortSessionsChronologically();
         renderAll();
       }
     } catch (e) {
       console.warn("Guna storan tempatan sementara.", e);
+      sortSessionsChronologically();
       updateSyncStatus(false);
       renderAll();
     }
@@ -869,6 +976,7 @@
 
     // SIMPAN DATA KE AWAN & LOCALSTORAGE
     function saveDataToCloud() {
+      sortSessionsChronologically();
       const payload = { 
         members, 
         dates, 
@@ -913,8 +1021,6 @@
     // ==========================================
     // LOGIK QR CODE TAMBAHAN (TANPA HAD)
     // ==========================================
-
-    // Memampatkan fail imej kepada resolusi optimum agar simpanan awan kekal pantas
     function compressImageFile(file, maxWidth, quality, callback) {
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -939,7 +1045,6 @@
       reader.readAsDataURL(file);
     }
 
-    // Muat naik QR Tambahan Baru
     function handleUploadAdditionalQr(e) {
       e.preventDefault();
       const title = document.getElementById('add-qr-title').value.trim();
@@ -970,7 +1075,6 @@
         additionalQrs.unshift(newQr);
         saveDataToCloud();
 
-        // Reset borang
         document.getElementById('add-qr-title').value = '';
         document.getElementById('add-qr-acc').value = '';
         document.getElementById('add-qr-notes').value = '';
@@ -982,7 +1086,6 @@
       });
     }
 
-    // Padam QR Tambahan
     function deleteAdditionalQr(id) {
       const target = additionalQrs.find(q => q.id === id);
       const title = target ? target.title : "QR";
@@ -992,14 +1095,12 @@
       }
     }
 
-    // Salin teks/nombor akaun
     function copyText(text, desc = "Nombor") {
       if (!text) return;
       navigator.clipboard.writeText(text);
       alert(`${desc} disalin: ${text}`);
     }
 
-    // Pembesar Gambar / Lightbox
     function openImagePreview(src, title, desc = "") {
       document.getElementById('preview-qr-image').src = src;
       document.getElementById('preview-qr-title').innerText = title || "Kod QR";
@@ -1011,7 +1112,6 @@
       document.getElementById('modal-qr-preview').classList.add('hidden');
     }
 
-    // Render Galeri QR Tambahan
     function renderAdditionalQrs() {
       const container = document.getElementById('additional-qr-grid');
       const badgeCount = document.getElementById('badge-qr-count');
@@ -1066,7 +1166,6 @@
               </button>
             </div>
 
-            <!-- PREVIEW KECIL DENGAN KLIK UNTUK BESARKAN -->
             <div class="relative bg-white border border-slate-200 rounded-xl p-2 text-center group-hover:border-brand-300 transition overflow-hidden">
               <img src="${q.image}" 
                    alt="${escapeHtml(q.title)}" 
@@ -1080,7 +1179,6 @@
               </button>
             </div>
 
-            <!-- BUTIRAN AKAUN / CATATAN -->
             <div class="mt-2.5 space-y-1.5 text-xs">
               ${q.acc ? `
                 <div class="flex items-center justify-between bg-white border border-slate-200/80 rounded-lg px-2.5 py-1.5">
@@ -1272,9 +1370,7 @@
       }
     }
 
-    // ==========================================
-    // LOGIK TABUNG KILAT (KECEMASAN / HAL SEGERA)
-    // ==========================================
+    // TABUNG KILAT LOGIK
     function toggleKilatTypeLabel() {
       const type = document.getElementById('kilat-type').value;
       const lbl = document.getElementById('lbl-kilat-person');
@@ -1387,15 +1483,6 @@
       }
     }
 
-    function addNewSessionPrompt() {
-      const newDate = prompt("Masukkan tarikh sesi usrah baru (cth: 13/9/26):");
-      if (newDate && newDate.trim() !== "") {
-        dates.push(newDate.trim());
-        members.forEach(m => m.payments.push(0));
-        saveDataToCloud();
-      }
-    }
-
     // BANK DETAILS
     function saveBankDetails(e) {
       e.preventDefault();
@@ -1406,7 +1493,6 @@
       alert("Maklumat akaun bank disimpan ke awan!");
     }
 
-    // MUAT NAIK QR UTAMA KE AWAN
     function uploadQrCode(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1455,7 +1541,9 @@
       return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
+    // =========================================================================
     // RENDER SEMUA PAPARAN
+    // =========================================================================
     function renderAll() {
       let totalActualInflow = 0;
       let totalDueAll = 0;
@@ -1463,12 +1551,24 @@
 
       updatePayerDropdowns();
 
-      // 1. Matriks Kutipan
+      // 1. Matriks Kutipan (Termasuk Butang Padam Kecil Terkawal)
       const matrixHead = document.getElementById('matrix-head');
       matrixHead.innerHTML = `
         <tr>
-          <th class="py-3 px-3 min-w-[130px] sticky left-0 bg-slate-100 z-10">Ahli Usrah</th>
-          ${dates.map(d => `<th class="py-3 px-2 text-center whitespace-nowrap">${d}</th>`).join('')}
+          <th class="py-3 px-3 min-w-[130px] sticky left-0 bg-slate-100 z-10 border-r border-slate-200">Ahli Usrah</th>
+          ${dates.map((d, idx) => `
+            <th class="py-3 px-2 text-center whitespace-nowrap group">
+              <div class="inline-flex items-center justify-center gap-1">
+                <span>${escapeHtml(d)}</span>
+                <button onclick="deleteSessionPrompt(${idx})" 
+                        title="Padam sesi ${escapeHtml(d)} (Perlu taip PADAM)" 
+                        class="text-[9px] text-slate-300 hover:text-rose-600 p-0.5 rounded transition opacity-50 hover:opacity-100 hover:bg-rose-50" 
+                        aria-label="Padam Sesi">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </th>
+          `).join('')}
           <th class="py-3 px-3 text-right whitespace-nowrap">Total Infaq</th>
         </tr>
       `;
@@ -1482,7 +1582,7 @@
       members.forEach((m, mIdx) => {
         let memberPaidTotal = 0;
 
-        let cellsHtml = m.payments.map((val, dIdx) => {
+        let cellsHtml = (m.payments || []).map((val, dIdx) => {
           memberPaidTotal += (val || 0);
           const isPaid = val > 0;
           const isMore = val > MIN_RATE;
@@ -1726,7 +1826,7 @@
       renderAdditionalQrs();
     }
 
-    // BACKUP LOCAL JSON (TERMASUK QR TAMBAHAN & TABUNG KILAT)
+    // BACKUP LOCAL JSON
     function exportData() {
       const data = { 
         members, 
